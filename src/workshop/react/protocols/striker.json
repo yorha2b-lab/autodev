@@ -67,6 +67,7 @@
                                     "enum": [
                                         "tag",
                                         "text",
+                                        "link",
                                         "date",
                                         "enum",
                                         "badge",
