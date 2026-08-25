@@ -4,7 +4,7 @@ module.exports = ({ template, logistics, headquarters }) => {
     const { needMock, responseSuccess } = logistics.supporter.getConfig()
     const { indexTpl, resourceTpl } = headquarters.designer({ template, logistics })
 
-    const formatFormItemAndColumns = ({ pageConfig }) => {
+    const formatPageconfig = ({ pageConfig }) => {
 
         const codePresets = {
             money: 'text => moneyRender(text)',
@@ -78,10 +78,10 @@ module.exports = ({ template, logistics, headquarters }) => {
     }
 
     return {
-        formatFormItemAndColumns,
+        formatPageconfig,
         resource: ({ pageConfig }) => {
 
-            const { formItems, processedColumns, dictBlocks } = formatFormItemAndColumns({ pageConfig })
+            const { formItems, processedColumns, dictBlocks } = formatPageconfig({ pageConfig })
 
             const hasTabs = pageConfig.tabs?.length > 0
             const hasFormItems = pageConfig.formItems?.length > 0

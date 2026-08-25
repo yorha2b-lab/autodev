@@ -1,7 +1,7 @@
 module.exports = `
 识别图片页面结构输出一个JSON对象
 
-任务模式：请根据图片内容，分别识别搜索表单结构和表格列结构。如果图片包含搜索区，请按Form规则输出；如果包含列表区，请按Table规则输出。
+任务模式：请根据图片内容，分别识别页面结构。如果图片是表单组件，请按Form规则输出；如果是列表组件，请按Table规则输出；如果是页签组件，请按Tabs规则输出。
 
 1. 严禁包含任何 Markdown 标签。
 2. 严禁包含注释或解释文字。
@@ -51,7 +51,10 @@ module.exports = `
     - 尾操作: 若项末尾有操作按钮（如 选择、编辑 等操作），必须存入 {renderAction:true,addonAfter:'尾操作名'} 属性。
     - 必填校验: 若图片中 label 前有红色星号，必须加入 rules:[{required:true,message:'xxx不能为空'}]。
 
-## 3. 下拉选项字典 (OptionDict)
+## 3. 页签 (Tabs)
+- 结构: tabs: [{label:'页签名',key:'页签英文'}]
+
+## 4. 下拉选项字典 (OptionDict)
 - 结构: optionDict: { 字段英文名Options: [] }
 - 内容: 数组元素必须为 {label: '', value: ''} 格式。
 `.trim()

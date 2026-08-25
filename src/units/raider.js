@@ -25,7 +25,7 @@ module.exports = {
         const { pod042 } = yorha
         const { raider } = briefings
         const { recognizePage } = llm
-        const { formatFormItemAndColumns } = builder
+        const { formatPageconfig } = builder
         const { cleanCode, contextStringify } = logistics.formatter
 
         const startTime = Date.now()
@@ -37,14 +37,16 @@ module.exports = {
 
             const pageConfig = await recognizePage({ prompt: raider, filePath: mission.input })
 
-            let { formItems, dictBlocks, processedColumns } = formatFormItemAndColumns({ pageConfig })
+            let { tabs = [] } = pageConfig
+            tabs = tabs.map(tab => ({ ...tab, children: `<${tab.key.at(0).toUpperCase()}${tab.key.slice(1)}/>` }))
 
+            let { formItems, dictBlocks, processedColumns } = formatPageconfig({ pageConfig })
             processedColumns = processedColumns.map(col => {
                 delete col.type
                 return col
             })
 
-            const result = Object.fromEntries(Object.entries({ formItems, processedColumns }).filter(([key, value]) => value?.length > 0))
+            const result = Object.fromEntries(Object.entries({ tabs, formItems, processedColumns }).filter(([key, value]) => value?.length > 0))
 
             let mainConfigStr = cleanCode(contextStringify({ context: result }))
 
