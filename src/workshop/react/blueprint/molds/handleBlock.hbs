@@ -69,7 +69,7 @@ const modalSubmit = async params => {
         {{this.action}}:()=> {{this.request}},
     {{/each}}
     }
-    const response = await requestMap[modal.type]
+    const response = await requestMap[modal.type]?.()
     if({{{responseSuccess}}}){
         setModal({ visible: false })
         refresh()

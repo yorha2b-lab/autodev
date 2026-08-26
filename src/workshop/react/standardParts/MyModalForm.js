@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { MyBaseForm } from './MyBaseForm'
 import { MyModalTable } from './MyModalTable'
-import { useMemo, useState, useEffect } from 'react'
+import { useRef, useMemo, useState, useEffect } from 'react'
 import { Row, Col, Form, Modal, Button, Collapse } from 'antd'
 
 const LAYOUT_PROCESSORS = {
@@ -93,6 +93,16 @@ const FormRenderer = ({ form, formItems, tableConfig, setModalTable, setSelected
     })
 }
 
+const flattenFormItems = items => {
+    if (!Array.isArray(items)) return []
+    return items.flatMap(item => {
+        if (item.childItems) {
+            return flattenFormItems(item.childItems)
+        }
+        return item
+    })
+}
+
 /**
  * @component MyModalForm
  * @description [地堡核心构筑舱] 通用弹窗表单组件。
@@ -127,22 +137,14 @@ export const MyModalForm = ({ width, title, footer, submit, record, visible, set
     const [modalTable, setModalTable] = useState({})
     const [selectedTableRows, setSelectedTableRows] = useState([])
 
-    const flattenFormItems = items => {
-        if (!Array.isArray(items)) return []
-        return items.flatMap(item => {
-            if (item.childItems) {
-                return flattenFormItems(item.childItems)
-            }
-            return item
-        })
-    }
+    const prevVisibleRef = useRef(false)
 
     /**
      * @description [数据回显协议] 当构筑舱开启时，自动对初始物资进行“语义格式化”。
      * 将后端传输的字符串/数字时间戳重新转化为地堡可读的 `dayjs` 对象。
      */
     useEffect(() => {
-        if (visible) {
+        if (visible && !prevVisibleRef.current) {
             form.resetFields()
             if (record && Object.keys(record).length > 0) {
                 const itemMap = new Map(flattenFormItems(formItems).map(i => [i.name, i]))
@@ -168,6 +170,7 @@ export const MyModalForm = ({ width, title, footer, submit, record, visible, set
                 form.setFieldsValue(initialData)
             }
         }
+        prevVisibleRef.current = visible
     }, [visible, record, form, formItems])
 
     /**
@@ -203,7 +206,7 @@ export const MyModalForm = ({ width, title, footer, submit, record, visible, set
         }
     }
 
-    const modalTableOk = () => handleModalTableOk({ form, selectedTableRows, setModalTable })
+    const modalTableOk = () => handleModalTableOk?.({ form, selectedTableRows, setModalTable })
 
     /**
      * @function handleCancel

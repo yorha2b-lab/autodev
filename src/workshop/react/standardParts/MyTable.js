@@ -145,7 +145,7 @@ export const MyTable = ({ size, query, total, search, autoScroll, onChange, pagi
             }),
             ...(typeof pagination === 'object' ? pagination : {})
         }
-    }, [total, search, pagination])
+    }, [total, search, pagination, isLocalPaging])
 
     /**
      * @description [视觉追踪协议] 当检测到 query.rowIndex 信号时，执行“物理重定向”。
