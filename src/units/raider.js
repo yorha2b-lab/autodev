@@ -40,7 +40,7 @@ module.exports = {
             let { tabs = [] } = pageConfig
             tabs = tabs.map(tab => ({ ...tab, children: `<${tab.key.at(0).toUpperCase()}${tab.key.slice(1)}/>` }))
 
-            let { formItems, dictBlocks, processedColumns } = formatPageconfig({ pageConfig })
+            let { formItems, processedColumns } = formatPageconfig({ pageConfig })
             processedColumns = processedColumns.map(col => {
                 delete col.type
                 return col
@@ -51,7 +51,7 @@ module.exports = {
             let mainConfigStr = cleanCode(contextStringify({ context: result }))
 
             let optionsCodeStr = ''
-            dictBlocks.forEach(key => {
+            Object.keys(pageConfig.optionDict ?? {}).forEach(key => {
                 const optionsArray = pageConfig.optionDict?.[key] ?? []
                 const arrayItemsStr = optionsArray.map(opt => `    { label: '${opt.label}', value: '${opt.value}' }`).join(',\n')
                 optionsCodeStr += `\nexport const ${key} = [\n${arrayItemsStr}\n]\n`
