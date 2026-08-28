@@ -61,7 +61,7 @@ const bootSequence = async (version, local) => {
 
     for (const line of lines) {
         console.log(line)
-        await sleep(line.includes('AutoDev') ? 300 : 80)
+        await sleep(line.includes('Bunker') ? 300 : 80)
     }
 }
 
