@@ -111,7 +111,7 @@ module.exports = ({ template, logistics, headquarters }) => {
         },
         index: ({ fileName, pageConfig }) => {
             const hasTabs = pageConfig.tabs?.length > 0
-            const hasPagination = pageConfig.table.pagination
+            const hasPagination = pageConfig.table?.pagination
             const hasFormItems = pageConfig.formItems?.length > 0
             const hasOperate = pageConfig.table?.operation?.length > 0
             const hasImageColumn = pageConfig.table?.columns?.some(item => item.type === 'image')

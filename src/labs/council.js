@@ -93,8 +93,14 @@ module.exports = async ({ llm, yorha, dialog, logistics }) => {
                     const pagesConfig = result?.['BUNKER_API_ANCHOR_pages']
                     if (pagesConfig) {
                         const { uri: pagesApi, method: pagesMethod } = pagesConfig
-                        const definitions = (apiData.paths[pagesApi]?.[pagesMethod] ?? apiData.paths[pagesApi]?.[pagesMethod?.toLowerCase()])?.parameters?.flatMap(item => Object.values(item.schema ?? {})?.flatMap(def => def?.split('/')?.at(-1))) || []
-                        const parameters = apiData.definitions?.[definitions[0]]?.properties ?? {}
+                        const schemas = apiData.definitions || apiData.components?.schemas || {}
+                        const methodObj = apiData.paths[pagesApi]?.[pagesMethod] ?? apiData.paths[pagesApi]?.[pagesMethod?.toLowerCase()]
+                        let schemaName = methodObj?.parameters?.flatMap(item => Object.values(item.schema ?? {})?.flatMap(def => def?.split('/')?.at(-1)))?.[0]
+                        if (!schemaName && methodObj?.requestBody) {
+                            const bodySchema = methodObj.requestBody.content?.['application/json']?.schema
+                            schemaName = (bodySchema?.$ref || bodySchema?.items?.$ref)?.split('/')?.at(-1)
+                        }
+                        const parameters = schemas[schemaName]?.properties ?? {}
                         const enumParams = Object.entries(parameters)?.filter(([_, value]) => value.hasOwnProperty('enum')) || []
                         enumParamsMap[fileName] = contextStringify({
                             maxLength: 100,
