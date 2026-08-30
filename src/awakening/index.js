@@ -33,6 +33,7 @@ module.exports = {
 
         if (version) {
             await logistics.presenter.bootSequence(version, local)
+            yorha.operator6O.report(dialog.operator6O.call2B)
         }
 
         const llm = require('../gateway')(accessPoint)

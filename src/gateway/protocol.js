@@ -29,7 +29,8 @@ module.exports = ({ yorha, sleep, dialog, openAI }) => {
             }
 
             yorha.commander.report(dialog.bunker.networkInstability(retryCount + 1))
-            await sleep(1000)
+            const delay = Math.min(1000 * Math.pow(2, retryCount), 10000)
+            await sleep(delay)
             return askAI({ model, messages, response_format, retryCount: retryCount + 1 })
         }
     }

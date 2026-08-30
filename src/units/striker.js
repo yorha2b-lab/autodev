@@ -53,7 +53,8 @@ module.exports = {
                 pod042.update(spinner, dialog.pod042.uploadVisualMetadata)
                 pageConfig = await recognizePage({ prompt: striker, filePath: mission.input, schema: require(`../workshop/${template}/protocols/striker.json`) })
                 const { similarity } = await nameSimilarity({ fileName, english: pageConfig.title?.english })
-                if (similarity === 0) {
+                const isGarbageName = /^(image|img|screen|capture|pic|temp|test|新建|未命名|[\d_-]+$)/i.test(fileName)
+                if (similarity < 0.3 || isGarbageName) {
                     fileName = pageConfig.title?.english
                     targetDir = path.join(process.cwd(), pagesDir, pageConfig.title?.english)
                     if (fs.existsSync(targetDir)) {

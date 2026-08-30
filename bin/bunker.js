@@ -61,7 +61,6 @@ program
             return
         }
         require('../src/headquarters/observer')(bunker)
-        result.yorha.operator6O.report(dialog.operator6O.call2B)
         process.on('SIGINT', async () => {
             if (isTerminating) return
             isTerminating = true

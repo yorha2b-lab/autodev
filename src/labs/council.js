@@ -44,8 +44,19 @@ module.exports = async ({ llm, yorha, dialog, logistics }) => {
                 const anchors = code.match(/BUNKER_API_ANCHOR_\w+/g) || []
                 anchors.forEach(a => allAnchors.add(a))
 
-                const chinese = code.match(/[\u4e00-\u9fa5][\u4e00-\u9fa5A-Za-z0-9？。，、：；！（） ]*/g) || []
-                allSemantics.push(...chinese)
+                const textMatches = code.match(/(?:['"`]([^'"`\n]{2,})['"`]|>([^<>{}\n]{2,})<)/g) || []
+                const uiSemantics = textMatches
+                    .map(str => str.replace(/['"`><]/g, '').trim())
+                    // 过滤掉纯代码路径（/api/xxx）、锚点占位符、纯数字和空字符
+                    .filter(text => (
+                        text.length >= 2 &&
+                        !text.startsWith('/') &&
+                        !text.startsWith('http') &&
+                        !text.includes('BUNKER_API_ANCHOR') &&
+                        !/^[0-9]+$/.test(text)
+                    ))
+
+                allSemantics.push(...uiSemantics)
             }
 
             if (allAnchors.size > 0) {
