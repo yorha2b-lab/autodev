@@ -1,6 +1,6 @@
 {
   "name": "@yorha2b-lab/autodev",
-  "version": "7.5.4",
+  "version": "7.5.5",
   "description": "基于 AI 视觉与语义协议的前端 (React+Antd) 代码构筑与旧系统重构引擎",
   "bin": {
     "bunker": "bin/bunker.js"
