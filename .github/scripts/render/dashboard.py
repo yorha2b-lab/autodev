@@ -37,7 +37,7 @@ def peak_recon():
     # 3.2 每周汇总
     axB = axes3[1]
     weekly_agg = df.assign(W=df['date'].dt.strftime(
-        '%Y-W%W')).groupby('W')[['clones', 'uniques']].sum().tail(12)
+        '%Y-W%V')).groupby('W')[['clones', 'uniques']].sum().tail(12)
     weekly_agg.plot(kind='bar', ax=axB, alpha=0.8)
     axB.set_title('Weekly Operational Summary',
                   fontsize=14, fontweight='bold')
@@ -204,13 +204,6 @@ def main_dashboard(df_c, df_v):
     df = pd.merge(df_c, df_v, on='date', how='outer').fillna(
         0).sort_values('date')
     df['cumulative'] = df['Clones'].cumsum()
-    df['ratio'] = df['Clones'] / \
-        df['Views_Uniques'].replace(0, 1)
-
-    # 💡 2. 核心算法注入：计算“信号纯度” (Purity)
-    df['cumulative'] = df['Clones'].cumsum()
-
-    # 计算“信号纯度”：克隆数 / 访客数
     df['ratio'] = df['Clones'] / df['Views_Uniques'].replace(0, 1)
 
     # 算法：(比例/10 * 0.6) + (总量/500 * 0.4)
