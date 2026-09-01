@@ -234,9 +234,8 @@ def main_dashboard(df_c, df_v):
     # --- 💡 子图 3 [核心新增]: 信号纯度审计 (Signal Purity) ---
     ax_p = fig1.add_subplot(gs1[2])
     # 使用渐变紫色，代表地堡的“骇入感知”
-    ax_p.fill_between(df['date'].tail(45), df['purity'].tail(
-        45), color='#ff00ff', alpha=0.1)
-    ax_p.plot(df['date'].tail(45), df['purity'].tail(45),
+    ax_p.fill_between(df['date'], df['purity'], color='#ff00ff', alpha=0.1)
+    ax_p.plot(df['date'], df['purity'],
               color='#ff00ff', lw=1.5, label='Signal Purity %')
     ax_p.set_ylim(0, 105)  # 留点空白放标题
     ax_p.axhline(y=50, color='#444', linestyle=':', alpha=0.5)  # 50% 警戒线
