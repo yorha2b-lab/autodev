@@ -16,22 +16,32 @@ def peak_recon():
     axA.fill_between(df['date'], df['clones'],
                      alpha=0.3, color='#3498db', label='Clones')
     axA.plot(df['date'], df['clones'], color='#3498db', linewidth=1.2)
+
+    # 💡 1. 核心修复：给左侧 Y 轴增加 25% 的顶部呼吸空间（从 859 扩充到 ~1050）
+    axA.set_ylim(bottom=0, top=df['clones'].max() * 1.25)
+
     axA_twin = axA.twinx()
     axA_twin.plot(df['date'], df['uniques'],
                   color='#e74c3c', linewidth=1.2, label='Visitors')
     axA_twin.fill_between(
         df['date'], df['uniques'], alpha=0.15, color='#e74c3c')
+    # 💡 2. 右侧 Y 轴同步给点余量
+    axA_twin.set_ylim(bottom=0, top=df['uniques'].max() * 1.2)
+
     axA.set_ylabel('Clones', color='#3498db', fontsize=12)
     axA_twin.set_ylabel('Visitors', color='#e74c3c', fontsize=12)
-    axA.set_title('Bunker Signal Intensity (Peak Detection Mode)',
-                  fontsize=14, fontweight='bold')
 
+    # 💡 3. 给标题加上 pad=15 间距，防止任何碰撞
+    axA.set_title('Bunker Signal Intensity (Peak Detection Mode)',
+                  fontsize=14, fontweight='bold', pad=15)
+
+    # 💡 4. 战术箭头微调：指向清晰，文字居中悬浮在留白区
     peak_clone_idx = df['clones'].idxmax()
     axA.annotate(f'LEGEND PEAK: {df["clones"].max()}',
                  xy=(df.loc[peak_clone_idx, 'date'],
                      df.loc[peak_clone_idx, 'clones']),
-                 xytext=(10, 20), textcoords='offset points',
-                 arrowprops=dict(arrowstyle='->', color='yellow'),
+                 xytext=(25, 20), textcoords='offset points',
+                 arrowprops=dict(arrowstyle='->', color='yellow', lw=1.5),
                  fontsize=10, color='yellow', fontweight='bold')
 
     # 3.2 每周汇总
