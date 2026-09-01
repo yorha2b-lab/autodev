@@ -10,6 +10,8 @@ def peak_recon():
     df = pd.read_csv('ghrs-data/clones_ledger.csv')
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values('date').reset_index(drop=True)
+    one_year_ago = df['date'].max() - pd.Timedelta(days=365)
+    df = df[df['date'] >= one_year_ago].reset_index(drop=True)
     fig3, axes3 = plt.subplots(3, 1, figsize=(16, 14))
     # 3.1 时间序列图
     axA = axes3[0]
@@ -72,6 +74,8 @@ def intelligence_grid():
     df = pd.read_csv('ghrs-data/clones_ledger.csv')
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values('date').reset_index(drop=True)
+    one_year_ago = df['date'].max() - pd.Timedelta(days=365)
+    df = df[df['date'] >= one_year_ago].reset_index(drop=True)
     df['week'] = df['date'].dt.isocalendar().week
     df['year'] = df['date'].dt.isocalendar().year
     df['week_key'] = df['year'].astype(
