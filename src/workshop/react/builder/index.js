@@ -118,7 +118,7 @@ module.exports = ({ template, logistics, headquarters }) => {
             const functionButtons = pageConfig.functionButton?.filter(item => !['查询', '重置', 'query', 'search', 'reset'].includes(item.btn.toLowerCase().replaceAll(' ', ''))) || []
             const needRenderAction = hasImageColumn
 
-            const pageStruct = ['stateBlock', 'handleBlock', 'hookBlock', hasOperate ? 'operateBlock' : '', 'renderBlock'].filter(Boolean)
+            const pageStruct = ['stateBlock', 'hookBlock', 'handleBlock', hasOperate ? 'operateBlock' : '', 'renderBlock'].filter(Boolean)
 
             let columnsValue = hasTabs ? 'columns[activeKey]' : 'columns'
             if (hasOperate) {

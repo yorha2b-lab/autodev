@@ -1,6 +1,5 @@
 
 const initialParams = {{initParams}}
-
 const query = formatQuery(Object.fromEntries(new URLSearchParams(location.search).entries()),  {{formItems}})
 
 /**
@@ -10,7 +9,7 @@ const query = formatQuery(Object.fromEntries(new URLSearchParams(location.search
  * 2. 手动模式：搜索 BUNKER_API_ANCHOR 手动替换为真实接口。
 */
 
-const { total, columns, loading, dataSource, search, setSearch, setDataSource, refresh } = useTableQuery({
+const { total, search, columns, loading, dataSource, setLoading, setSearch, setDataSource, refresh } = useTableQuery({
         cols:tableColumns,
         initialParams: { ...initialParams, ...query },
         api: async params => await {{{this.uri}}},

@@ -1,7 +1,9 @@
 
 {{#each operations}}
 const {{this.action}} = async params => {
+    setLoading(true)
     const response = await {{{this.request}}}
+    setLoading(false)
     if({{{../responseSuccess}}}){
         refresh()
     }
