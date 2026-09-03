@@ -56,7 +56,7 @@ bunker init
 > **💡 Zero-Config Demo Mode**
 > Demo mode is enabled by default:
 > 1. No `API_KEY` required, run `bunker boot` directly.
-> 2. Drop any image into `./bunker/screenShot` (system ignores image content and drops standard `example.json` construction package).
+> 2. Drop any image into `./bunker/mission` (system ignores image content and drops standard `example.json` construction package).
 > 3. To recognize real screenshots, set `useDemo: false` in `bunker/config.js` and configure `.env`.
 
 Create a `.env` file and configure environment variables:

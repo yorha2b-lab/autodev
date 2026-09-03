@@ -56,7 +56,7 @@ bunker init
 > **💡 零配置演示模式 (Demo Mode)**
 > 项目默认开启 Demo 模式：
 > 1. 无需配置 API_KEY，直接运行 `bunker boot`。
-> 2. 向 `./bunker/screenShot` 目录丢入任意图片（系统自动空投标准 `example.json` 构筑包）。
+> 2. 向 `./bunker/mission` 目录丢入任意图片（系统自动空投标准 `example.json` 构筑包）。
 > 3. 若想识别真实代码/截图，请在 `bunker/config.js` 中将 `useDemo` 设为 `false` 并配置 `.env`。
 
 创建 `.env` 文件并配置以下环境变量：
