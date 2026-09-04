@@ -27,6 +27,13 @@ program
         const equipments = []
         const root = process.cwd()
         const { template } = program.opts()
+
+        const builderPath = path.join(__dirname, `../workshop/${template}/builder`)
+        if (!fs.existsSync(builderPath)) {
+            console.log(chalk.red(dialog.bunker.frameworkNotSupported(template)))
+            return
+        }
+
         const workshop = path.join(__dirname, `../src/workshop/${template}`)
         const quartermaster = require('../src/headquarters/quartermaster')({ dialog })
         const { hbsDir, hooksDir, utilsDir, componentsDir } = require('../src/logistics/supporter').getConfig()
