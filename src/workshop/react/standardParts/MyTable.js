@@ -116,7 +116,7 @@ export const MyTable = ({ size, query, total, search, autoScroll, onChange, setS
                                 <div style={{ display: 'flex' }}>
                                     <a style={{ marginLeft: 'auto', marginRight: 8 }} onClick={() => {
                                         if (col.remote) {
-                                            setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: col.formatFilter(selectedKeys) }))
+                                            setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: col.formatFilter?.(selectedKeys) ?? selectedKeys }))
                                         }
                                         confirm()
                                     }}>确定</a>
