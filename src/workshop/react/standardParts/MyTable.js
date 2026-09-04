@@ -1,4 +1,4 @@
-import { Table } from 'antd'
+import { Space, Table } from 'antd'
 import { EditableRow, EditableCell } from './EditableCell'
 import { useRef, useMemo, useEffect, useCallback } from 'react'
 
@@ -116,7 +116,7 @@ export const MyTable = ({ size, query, total, search, autoScroll, onChange, setS
                                 <div style={{ display: 'flex' }}>
                                     <a style={{ marginLeft: 'auto', marginRight: 8 }} onClick={() => {
                                         if (col.remote) {
-                                            setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: col.formatFilter?.(selectedKeys) ?? selectedKeys }))
+                                            setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: col.formatFilter?.(selectedKeys) ?? selectedKeys?.toString() }))
                                         }
                                         confirm()
                                     }}>确定</a>
