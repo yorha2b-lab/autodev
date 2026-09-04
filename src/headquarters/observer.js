@@ -14,7 +14,7 @@ module.exports = bunker => {
     })
 
     missionObserver.on('add', filePath => {
-        if (['.png', '.jpg', '.jpeg', '.webp'].includes(path.extname(filePath))) {
+        if (['.png', '.jpg', '.jpeg', '.webp'].includes(path.extname(filePath).toLowerCase())) {
             commander.receive({ input: filePath })
         }
     })
