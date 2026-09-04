@@ -2,6 +2,7 @@ const { Segment, useDefault } = require('segmentit')
 const segmentit = useDefault(new Segment())
 
 const unwrapSignal = json => {
+    if (!json || typeof json !== 'object') return null
     if (Array.isArray(json)) return json
     const dataKeys = ['data', 'list', 'items', 'datas', 'rows', 'result', 'payload', 'results', 'dataList']
     for (const key of dataKeys) {
@@ -26,9 +27,11 @@ const getSemanticKeywords = text => {
 }
 
 const isQuerySignal = (req, json, coreData) => {
-    const url = req.url.toLowerCase()
+    const pathname = req.url.split('?')[0].toLowerCase()
     const actionKeywords = ['add', 'delete', 'update', 'save', 'remove', 'edit', 'insert', 'create', 'export', 'upload']
-    if (actionKeywords.some(key => url.includes(key))) return false
+    if (actionKeywords.some(key => pathname.split(/[/\-_]/).includes(key))) {
+        return false
+    }
     const hasListData = Array.isArray(coreData) && coreData.length > 0
     const hasPaginationFingerprint = ['total', 'records', 'page', 'size', 'count'].some(key => {
         const k = key.toLowerCase()
@@ -37,12 +40,14 @@ const isQuerySignal = (req, json, coreData) => {
     return hasListData || hasPaginationFingerprint
 }
 
+const normalize = str => str.toLowerCase().replace(/[-_]/g, '')
+
 const getLocalScore = (api, pageKeywords, moduleName) => {
     let score = 0
     const path = api.path.toLowerCase()
     const desc = api.desc.toLowerCase()
     const mod = moduleName.toLowerCase()
-    if (path.includes(mod)) score += 50
+    if (normalize(path).includes(normalize(mod))) score += 50
     pageKeywords.forEach(word => {
         if (desc.includes(word.toLowerCase())) score += 10
         if (path.includes(word.toLowerCase())) score += 5
