@@ -54,7 +54,7 @@ import { useRef, useMemo, useEffect, useCallback } from 'react'
  *   }}
  * />
  */
-export const MyTable = ({ size, query, total, search, autoScroll, onChange, pagination, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', loading = false, dataSource = [], scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
+export const MyTable = ({ size, query, total, search, autoScroll, onChange, setSearch, pagination, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', loading = false, dataSource = [], scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
 
     const tableRef = useRef(null)
     const hasScrolledRef = useRef(false)
@@ -101,10 +101,37 @@ export const MyTable = ({ size, query, total, search, autoScroll, onChange, pagi
     const mergedColumns = useMemo(() => {
         return columns.map(col => {
             if (!col.editType) {
+                let currentCol = { ...col }
                 if (col.renderAction && renderAction?.[col.dataIndex]) {
-                    return { ...col, render: renderAction[col.dataIndex] }
+                    currentCol.render = renderAction[col.dataIndex]
                 }
-                return col
+                if (col.search) {
+                    currentCol = {
+                        ...currentCol,
+                        filterSearch: true,
+                        onFilter: (value, record) => col.remote ? undefined : col.customFilter({ value, record, dataIndex: col.dataIndex }),
+                        filterDropdown: ({ close, confirm, selectedKeys, clearFilters, setSelectedKeys }) => (
+                            <Space direction='vertical' style={{ padding: 12 }}>
+                                {col.customFilterDropdown({ dataIndex: col.dataIndex, selectedKeys, setSelectedKeys })}
+                                <div style={{ display: 'flex' }}>
+                                    <a style={{ marginLeft: 'auto', marginRight: 8 }} onClick={() => {
+                                        if (col.remote) {
+                                            setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: col.formatFilter(selectedKeys) }))
+                                        }
+                                        confirm()
+                                    }}>确定</a>
+                                    <a onClick={() => {
+                                        if (col.remote) {
+                                            setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: undefined }))
+                                        }
+                                        clearFilters()
+                                    }}>重置</a>
+                                </div>
+                            </Space>
+                        ),
+                    }
+                }
+                return currentCol
             }
             return {
                 ...col,
@@ -113,6 +140,7 @@ export const MyTable = ({ size, query, total, search, autoScroll, onChange, pagi
                     handleSave,
                     title: col.title,
                     rules: col.rules,
+                    extra: col.extra,
                     options: col.options,
                     editType: col.editType,
                     dataIndex: col.dataIndex,
@@ -145,7 +173,7 @@ export const MyTable = ({ size, query, total, search, autoScroll, onChange, pagi
             }),
             ...(typeof pagination === 'object' ? pagination : {})
         }
-    }, [total, search, pagination, isLocalPaging])
+    }, [total, search, pagination])
 
     /**
      * @description [视觉追踪协议] 当检测到 query.rowIndex 信号时，执行“物理重定向”。
