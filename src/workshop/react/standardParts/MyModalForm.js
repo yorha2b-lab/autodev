@@ -128,7 +128,7 @@ const flattenFormItems = items => {
  *   formItems={[{ label: '截止日期', name: 'deadline', type: 'date' }]}
  * />
  */
-export const MyModalForm = ({ width, title, footer, submit, record, visible, setModal, labelCol, formItems, wrapperCol, tableConfig, okButtonProps, onValuesChange, handleModalTableOk }) => {
+export const MyModalForm = ({ extra, width, title, layout, okText, footer, submit, record, visible, setModal, labelCol, formItems, wrapperCol, cancelText, tableConfig, okButtonProps, onValuesChange, handleModalTableOk }) => {
 
     const rowKey = tableConfig?.rowKey || 'id'
 
@@ -179,7 +179,7 @@ export const MyModalForm = ({ width, title, footer, submit, record, visible, set
      * @description [物理加压提交] 执行表单校验，并自动启动“时间戳转换协议”。
      * 确保发射至后端的数据包符合标准 Unix 时间戳（毫秒）规范。
      */
-    const handleOk = async () => {
+    const handleOk = async (extraParams = {}) => {
         try {
             const values = await form.validateFields()
             const formattedValues = { ...values }
@@ -197,7 +197,7 @@ export const MyModalForm = ({ width, title, footer, submit, record, visible, set
             })
             if (submit) {
                 setPending(true)
-                await submit({ ...record, ...formattedValues })
+                await submit({ ...record, ...formattedValues, ...extraParams })
             }
         } catch (error) {
             console.log('表单校验失败:', error)
@@ -222,6 +222,8 @@ export const MyModalForm = ({ width, title, footer, submit, record, visible, set
         onChange: (selectedRowKeys, selectedRows) => setSelectedTableRows(selectedRows),
     }), [rowKey, modalTable, selectedTableRows])
 
+    const ctx = { form, record, pending, handleOk, handleCancel, setModal }
+
     return (
         <Modal
             centered
@@ -229,19 +231,23 @@ export const MyModalForm = ({ width, title, footer, submit, record, visible, set
             width={width}
             open={visible}
             destroyOnClose
-            onOk={handleOk}
+            okText={okText}
+            onOk={() => handleOk()}
+            cancelText={cancelText}
             onCancel={handleCancel}
             confirmLoading={pending}
             okButtonProps={okButtonProps}
-            bodyStyle={{ paddingBottom: 0 }}
-            footer={footer?.({ form, record, setModal })}
+            footer={typeof footer === 'function' ? footer(ctx) : footer}
+            bodyStyle={{ paddingBottom: 0, maxHeight: '80vh', overflowY: 'auto' }}
         >
             {modalTable.visible && <MyModalTable rowKey={rowKey} {...modalTable} rowSelection={tableRowSelection} onOk={modalTableOk} setModal={setModalTable} />}
-            <Form form={form} preserve={false} labelCol={labelCol} wrapperCol={wrapperCol} onValuesChange={(changed, all) => onValuesChange?.({ changed, all, form, record })}>
+            {extra?.header?.(ctx)}
+            <Form form={form} layout={layout} preserve={false} labelCol={labelCol} wrapperCol={wrapperCol} onValuesChange={(changed, all) => onValuesChange?.({ changed, all, form, record })}>
                 <Row gutter={[24, 0]}>
                     <FormRenderer form={form} formItems={formItems} tableConfig={tableConfig} setModalTable={setModalTable} setSelectedTableRows={setSelectedTableRows} />
                 </Row>
             </Form>
+            {extra?.footer?.(ctx)}
         </Modal>
     )
 }
