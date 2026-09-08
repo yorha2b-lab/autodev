@@ -145,7 +145,6 @@ export const MyModalForm = ({ extra, width, title, layout, okText, footer, submi
      */
     useEffect(() => {
         if (visible && !prevVisibleRef.current) {
-            form.resetFields()
             if (record && Object.keys(record).length > 0) {
                 const itemMap = new Map(flattenFormItems(formItems).map(i => [i.name, i]))
                 const initialData = {}
