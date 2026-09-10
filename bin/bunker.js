@@ -28,7 +28,7 @@ program
         const root = process.cwd()
         const { template } = program.opts()
 
-        const builderPath = path.join(__dirname, `../workshop/${template}/builder`)
+        const builderPath = path.join(__dirname, `../src/workshop/${template}/builder`)
         if (!fs.existsSync(builderPath)) {
             console.log(chalk.red(dialog.bunker.frameworkNotSupported(template)))
             return
