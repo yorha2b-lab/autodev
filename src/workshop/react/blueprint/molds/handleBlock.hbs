@@ -14,11 +14,16 @@ const {{this.action}} = async params => {
 {{#each functionButtons}}
 const {{this.action}} = () => {
     const params = {}
+    let fetching = false
     Modal.confirm({
         title: '确认',
         centered: true,
         content: '确认{{this.btn}}吗？',
         onOk: async () => {
+            if (fetching) {
+                return
+            }
+            fetching = true
             const response = await {{{this.request}}}
             if({{{../responseSuccess}}}){
                 refresh()
