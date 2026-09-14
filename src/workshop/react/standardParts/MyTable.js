@@ -58,6 +58,8 @@ export const MyTable = ({ size, query, total, search, autoScroll, onChange, setS
 
     const tableRef = useRef(null)
     const hasScrolledRef = useRef(false)
+    const dataSourceRef = useRef(dataSource)
+    dataSourceRef.current = dataSource
 
     /**
      * @description [权限侦察] 自动扫描列配置。若存在 editType 型号，则激活“骇入模式（编辑模式）”。
@@ -67,19 +69,18 @@ export const MyTable = ({ size, query, total, search, autoScroll, onChange, setS
     /**
      * @function handleSave
      * @description [原子级物理封存] 执行数据更新协议。
-     * 采用函数式状态更新（prev => ...）以彻底消除闭航陷阱（Stale Closure），确保数据高频修改时的绝对准确。
-     *
      * @param {Object} row - 修改后的行片段
      */
     const handleSave = useCallback((row) => {
-        setDataSource(prev => {
-            const newData = [...prev]
-            const index = newData.findIndex(item => row[rowKey] === item[rowKey])
-            const item = newData[index]
-            newData.splice(index, 1, { ...item, ...row })
-            customSave?.({ ...item, ...row }, newData)
-            return newData
-        })
+        const prev = dataSourceRef.current
+        const index = prev.findIndex(item => row[rowKey] === item[rowKey])
+        if (index === -1) return
+        const item = prev[index]
+        const updatedRow = { ...item, ...row }
+        const newData = [...prev]
+        newData.splice(index, 1, updatedRow)
+        setDataSource(newData)
+        customSave?.(updatedRow, newData)
     }, [rowKey, customSave, setDataSource])
 
     /**
