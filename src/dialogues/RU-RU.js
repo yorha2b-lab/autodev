@@ -23,10 +23,10 @@ module.exports = {
     },
     pod153: {
         signalLinkFault: virus => `Ошибка сигнального соединения: ${virus}`,
-        signalSynchronized: count => `Синхронизация ${count} узлов завершена. Питание подтверждено`,
         inactiveModule: fileName => `Обнаружен неактивный модуль [${fileName}]. Запрошен высокоточный анализ 9S`,
         autonomousAddressing: 'Запуск «протокола автоматической адресации всех каналов [семантическая версия]»...',
         alignmentFailed: virus => `Ошибка выравнивания сигнала. Данные API заблокированы мощным брандмауэром: ${virus}`,
+        signalSynchronized: (count, module) => `[${module}] Синхронизация ${count} узлов завершена. Питание подтверждено`,
         unknownModule: fileName => `Ресурс модуля [${fileName}] не найден в базе Bunker. Сначала выполните визуальную сборку`,
         bridgeProtocolComplete: (count, time) => `Семантический мост завершён. Исправлено различий полей: ${count}. Время: ${time}s`,
         reconEncryptedData: fileName => `Обнаружен зашифрованный источник данных [${fileName}]. Попытка семантического согласования...`,

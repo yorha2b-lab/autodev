@@ -23,7 +23,7 @@ module.exports = {
     },
     pod153: {
         signalLinkFault: virus => `Erreur de liaison du signal : ${virus}`,
-        signalSynchronized: count => `${count} nœuds synchronisés. Alimentation confirmée`,
+        signalSynchronized: (count, module) => `[${module}] ${count} nœuds synchronisés. Alimentation confirmée`,
         inactiveModule: fileName => `Module non activé détecté [${fileName}]. Analyse haute précision demandée à 9S`,
         autonomousAddressing: 'Activation du « protocole d’adressage automatique multi-canaux [version analyse sémantique] »...',
         alignmentFailed: virus => `Échec de synchronisation du signal. Les données API sont bloquées par un pare-feu puissant : ${virus}`,

@@ -118,7 +118,7 @@ module.exports = async ({ llm, yorha, dialog, logistics }) => {
                             context: Object.fromEntries(enumParams.map(([key, value]) => [`${key}Options`, value.enum?.map(opt => ({ label: opt, value: opt }))])),
                         })
                     }
-                    pod153.success(spinner, dialog.pod153.signalSynchronized(Object.keys(result).length))
+                    pod153.success(spinner, dialog.pod153.signalSynchronized(Object.keys(result).length, fileName))
                     commander.report(dialog.bunker.disclaimer, 'yellow')
                 }
             }

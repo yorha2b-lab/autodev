@@ -24,10 +24,10 @@ module.exports = {
     pod153: {
         signalLinkFault: virus => `信号链路故障: ${virus}`,
         autonomousAddressing: `启动‘全频道自动寻址协议 [语义扫描版]’...`,
-        signalSynchronized: count => `信号同步完成，${count} 个节点已通电`,
         alignmentFailed: virus => `信号对齐失败。接口数据遭遇强力防火墙：${virus}`,
         inactiveModule: fileName => `发现未通电模块 [${fileName}]，请求 9S 执行高精度对账...`,
         capturedRuntimeSignal: fileName => `截获运行时信号 [${fileName}]。执行自动对齐协议...`,
+        signalSynchronized: (count, module) => `[${module}] 信号同步完成，${count} 个节点已通电`,
         reconEncryptedData: fileName => `发现加密数据源 [${fileName}]。正在尝试执行语义对齐协议...`,
         unknownModule: fileName => `地堡数据库中未检索到模块 [${fileName}] 的资源文件。请先执行视觉构筑`,
         bridgeProtocolComplete: (count, time) => `语义桥接协议执行完毕。已物理修正 ${count} 处字段偏差。耗时: ${time}s`,

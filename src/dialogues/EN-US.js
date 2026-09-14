@@ -23,8 +23,8 @@ module.exports = {
     },
     pod153: {
         signalLinkFault: virus => `Signal Link Fault: ${virus}`,
-        signalSynchronized: count => `Signal Synchronized: ${count} nodes energized`,
         alignmentFailed: virus => `Alignment failed. Encountered powerful API firewall: ${virus}`,
+        signalSynchronized: (count, module) => `[${module}] Signal Synchronized: ${count} nodes energized`,
         autonomousAddressing: `Initiating 'Full-Channel Autonomous Addressing Protocol [Semantic Scan]'...`,
         inactiveModule: fileName => `Inactive module: [${fileName}]. Requesting 9S for precise alignment...`,
         reconEncryptedData: fileName => `Encrypted data source [${fileName}] detected. Initiating semantic alignment...`,

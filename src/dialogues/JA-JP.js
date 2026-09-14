@@ -23,8 +23,8 @@ module.exports = {
     },
     pod153: {
         signalLinkFault: virus => `シグナルリンク障害: ${virus}`,
-        signalSynchronized: count => `${count}個のノード同期完了。電力供給を確認`,
         autonomousAddressing: '「全チャンネル自動アドレス指定プロトコル [セマンティック解析版]」を起動...',
+        signalSynchronized: (count, module) => `[${module}] ${count}個のノード同期完了。電力供給を確認`,
         inactiveModule: fileName => `未通電モジュール [${fileName}] を検出。9Sによる高精度照合を要求します`,
         capturedRuntimeSignal: fileName => `ランタイムシグナル [${fileName}] を捕捉。自動同期プロトコルを開始`,
         alignmentFailed: virus => `シグナル同期失敗。APIデータが強力なファイアウォールに阻害されています：${virus}`,
