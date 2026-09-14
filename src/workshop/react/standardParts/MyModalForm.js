@@ -114,7 +114,7 @@ const flattenFormItems = items => {
  * @param {Object} [props.wrapperCol] - 控件布局校准
  * @param {string|number} [props.width] - 舱体物理宽度
  * @param {boolean} props.visible - 激活信号：控制弹窗的物理显示状态
- * @param {Array} props.formItems - 零部件清单：定义表单内部的输入单元
+ * @param {Array} props.modalItems - 零部件清单：定义表单内部的输入单元
  * @param {Object} [props.record] - 初始物资包：用于编辑模式的数据回显
  * @param {Function} props.submit - 数据发射协议：提交表单后的核心回调函数
  * @param {Function} props.setModal - 指令中心：用于更新弹窗状态（开启/关闭）
@@ -128,9 +128,10 @@ const flattenFormItems = items => {
  *   formItems={[{ label: '截止日期', name: 'deadline', type: 'date' }]}
  * />
  */
-export const MyModalForm = ({ extra, width, title, layout, okText, footer, submit, record, visible, setModal, labelCol, formItems, wrapperCol, cancelText, tableConfig, okButtonProps, onValuesChange, handleModalTableOk }) => {
+export const MyModalForm = ({ extra, width, title, layout, okText, options, footer, submit, record, visible, setModal, labelCol, modalItems, wrapperCol, cancelText, tableConfig, okButtonProps, onValuesChange, handleModalTableOk }) => {
 
     const rowKey = tableConfig?.rowKey || 'id'
+    const formItems = useMemo(() => modalItems.map(item => ({ ...item, ...(['select'].includes(item.type) ? { options: item.options ?? options?.[item.name] ?? [] } : {}) })), [modalItems, options])
 
     const [form] = Form.useForm()
     const [pending, setPending] = useState(false)
