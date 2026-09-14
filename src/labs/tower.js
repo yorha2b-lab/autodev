@@ -1,4 +1,4 @@
-module.exports = ({ units, yorha, dialog, logistics, headquarters }) => {
+module.exports = ({ yorha, dialog, logistics, headquarters }) => {
 
     const http = require('http')
     const zlib = require('zlib')
@@ -27,10 +27,17 @@ module.exports = ({ units, yorha, dialog, logistics, headquarters }) => {
                 const rawBody = encoding === 'gzip' ? zlib.gunzipSync(buffer) : buffer
                 const json = JSON.parse(rawBody.toString())
                 const coreData = unwrapSignal(json)
-                if (!isQuerySignal(req, json, coreData) || coreData?.length === 0) {
+                if (!isQuerySignal(req, json, coreData)) {
                     return
                 }
-                const referer = req.headers.referer || '/'
+                let sampleData = coreData?.[0]
+                if (!sampleData) {
+                    const { labs } = require('../awakening').get()
+                    const council = await labs?.council
+                    sampleData = council?.falseTruth?.(req.url, req.method)
+                }
+                if (!sampleData) return
+                const referer = req.headers.referer || 'http://localhost'
                 const urlPath = new URL(referer).pathname
                 const fileName = routeMap?.[urlPath] ?? urlPath.split('/').filter(Boolean).at(-1)
                 const fingerprint = getJsonFingerprint(coreData)
@@ -39,7 +46,7 @@ module.exports = ({ units, yorha, dialog, logistics, headquarters }) => {
                     return
                 }
                 pod153.report(dialog.pod153.capturedRuntimeSignal(fileName))
-                await headquarters.reconciler({ fileName, data: [coreData[0]] })
+                await headquarters.reconciler({ fileName, data: [sampleData] })
                 hackedRegistry.set(fileName, fingerprint)
             } catch (e) {
                 // 非 JSON 信号，保持静默
