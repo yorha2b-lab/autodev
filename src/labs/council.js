@@ -2,6 +2,7 @@ module.exports = async ({ llm, yorha, dialog, logistics }) => {
 
     const fs = require('fs')
     const path = require('path')
+    const JSON5 = require('json5')
 
     const { apiParser } = llm
     const { pod153, commander } = yorha
@@ -13,7 +14,9 @@ module.exports = async ({ llm, yorha, dialog, logistics }) => {
 
     pod153.report(dialog.pod153.autonomousAddressing, 'magenta')
 
-    const apiData = await fetch(apiDoc).then(res => res.json())
+    const apiResponse = await fetch(apiDoc)
+    const text = await apiResponse.text()
+    const apiData = JSON5.parse(text)
     const refinedApis = Object.entries(apiData.paths).flatMap(([apiUrl, methods]) => {
         return Object.entries(methods).map(([method, info]) => ({
             path: apiUrl,

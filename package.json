@@ -37,12 +37,12 @@
   "homepage": "https://github.com/yorha2b-lab/autodev#readme",
   "dependencies": {
     "ora": "^5.4.1",
-    "chalk": "^4.1.2",
     "json5": "^2.2.3",
+    "chalk": "^4.1.2",
     "sharp": "^0.34.5",
-    "dotenv": "^17.3.1",
-    "figlet": "^1.10.0",
     "openai": "^6.24.0",
+    "figlet": "^1.10.0",
+    "dotenv": "^17.3.1",
     "chokidar": "^5.0.0",
     "segmentit": "^2.0.3",
     "commander": "^14.0.3",
@@ -50,6 +50,5 @@
     "puppeteer": "^25.4.0",
     "http-proxy": "^1.18.1",
     "json-stringify-pretty-compact": "^4.0.0"
-  },
-  "devDependencies": {}
+  }
 }
