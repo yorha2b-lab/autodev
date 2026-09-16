@@ -135,7 +135,7 @@ export const exportDataToExcel = async ({ url, options, columns, fileName, forma
  * @param {Object} [params.headers] - 自定义请求头
  * @param {string} [fileName='下载'] - 预设文件名（支持从 Content-Disposition 自动对齐）
  */
-export const streamDownload = async ({ url, options, headers = {} }, fileName = '下载') => {
+export const streamDownload = async ({ url, options, headers = { 'Content-Type': 'application/json' } }, fileName = '下载') => {
 
     const response = await fetch(url, { ...options, headers })
 
