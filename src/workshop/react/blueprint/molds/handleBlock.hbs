@@ -82,6 +82,7 @@ const modalSubmit = async params => {
     const response = await requestMap[modal.type]?.()
     if({{{responseSuccess}}}){
         setModal({ visible: false })
+        fetching = false
         refresh()
     }
 }
