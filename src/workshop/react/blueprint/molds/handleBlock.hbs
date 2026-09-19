@@ -80,9 +80,9 @@ const modalSubmit = async params => {
     if (fetching) return
     fetching = true
     const response = await requestMap[modal.type]?.()
+    fetching = false
     if({{{responseSuccess}}}){
         setModal({ visible: false })
-        fetching = false
         refresh()
     }
 }
