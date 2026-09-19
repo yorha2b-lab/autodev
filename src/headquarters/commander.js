@@ -18,27 +18,29 @@ module.exports = bunker => {
 
     return {
         receive: async mission => {
-            let unit
-            let spinner
-            try {
-                if (acp.logistics.supporter.getConfig().useDemo) {
-                    unit = units.find(unit => unit.meta.name === 'striker')
-                } else {
-                    spinner = acp.yorha.commander.start(acp.dialog.bunker.detectedEnemy)
-                    const result = await acp.llm.recognizePage({ filePath: mission.input, prompt: acp.constitution.commander(units) })
-                    acp.yorha.commander.success(spinner, acp.dialog.bunker.confirmEnemy)
-                    unit = units.map(unit => ({ unit, score: unit.meta.capabilities.filter(cap => result.capabilities.includes(cap)).length }))
-                        .filter(item => item.score > 0)
-                        .sort((a, b) => b.score - a.score)[0]?.unit
+            dispatcher.add(async () => {
+                let unit
+                let spinner
+                try {
+                    if (acp.logistics.supporter.getConfig().useDemo) {
+                        unit = units.find(unit => unit.meta.name === 'striker')
+                    } else {
+                        spinner = acp.yorha.commander.start(acp.dialog.bunker.detectedEnemy)
+                        const result = await acp.llm.recognizePage({ filePath: mission.input, prompt: acp.constitution.commander(units) })
+                        acp.yorha.commander.success(spinner, acp.dialog.bunker.confirmEnemy)
+                        unit = units.map(unit => ({ unit, score: unit.meta.capabilities.filter(cap => result.capabilities.includes(cap)).length }))
+                            .filter(item => item.score > 0)
+                            .sort((a, b) => b.score - a.score)[0]?.unit
+                    }
+                    if (!unit) {
+                        acp.yorha.commander.fail(spinner, acp.dialog.bunker.missionFailed)
+                        return
+                    }
+                    await unit.execute({ acp, mission })
+                } catch (error) {
+                    acp.yorha.commander.fail(spinner, acp.dialog.bunker.missionUnknown)
                 }
-                if (!unit) {
-                    acp.yorha.commander.fail(spinner, acp.dialog.bunker.missionFailed)
-                    return
-                }
-                dispatcher.add(() => unit.execute({ acp, mission }))
-            } catch (error) {
-                acp.yorha.commander.fail(spinner, acp.dialog.bunker.missionUnknown)
-            }
-        },
+            })
+        }
     }
 }
