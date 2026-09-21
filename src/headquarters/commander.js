@@ -12,7 +12,7 @@ module.exports = bunker => {
 
     const acp = bunker.get()
     const units = Object.values(acp.units)
-    const dispatcher = acp.headquarters.dispatcher(acp, 2)
+    const dispatcher = acp.headquarters.dispatcher(acp)
 
     dispatcher.onIdle(() => acp.yorha.commander.report(acp.dialog.bunker.systemStandby, 'gray'))
 

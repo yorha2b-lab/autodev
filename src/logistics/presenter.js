@@ -8,23 +8,23 @@ const yorha = () => {
 
     const createMember = ({ name }) => ({
         start(text) {
-            const spinner = ora({ text: chalk.cyan(`${name} ${text}\n`) }).start()
+            const spinner = ora({ text: chalk.cyan(`${name} ${text}`) }).start()
             return spinner
         },
         fail(spinner, text) {
-            spinner.fail(chalk.red(`${name} ${text}\n`))
+            spinner.fail(chalk.red(`${name} ${text}`))
         },
         report(text, color = 'yellow') {
-            console.log(chalk[color](`${name} ${text}\n`))
+            console.log(chalk[color](`${name} ${text}`))
         },
         update(spinner, text) {
-            spinner.text = chalk.cyan(`${name} ${text}\n`)
+            spinner.text = chalk.cyan(`${name} ${text}`)
         },
         warning(spinner, text) {
-            spinner.warn(chalk.yellow(`${name} ${text}\n`))
+            spinner.warn(chalk.yellow(`${name} ${text}`))
         },
         success(spinner, text) {
-            spinner.succeed(chalk.green(`${name} ${text}\n`))
+            spinner.succeed(chalk.green(`${name} ${text}`))
         },
     })
 
