@@ -95,10 +95,10 @@ export const MyBaseForm = ({ item, form }) => {
             // 💡 单兵模式：标准 Form.Item 构筑
             <Form.Item
                 label={item.label}
-                extra={item.extra}
                 tooltip={item.tooltip}
                 labelCol={item.labelCol}
                 wrapperCol={item.wrapperCol}
+                extra={item.extra || item.help}
                 required={item.required ?? item.rules?.some(v => v.required)}
                 style={{ marginBottom: !item.name ? 0 : undefined, ...item.style }}
             >
