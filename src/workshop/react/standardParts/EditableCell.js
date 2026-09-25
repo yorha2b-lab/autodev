@@ -1,3 +1,4 @@
+import { SortableElement } from 'react-sortable-hoc'
 import { Form, Input, InputNumber, Select, Checkbox } from 'antd'
 import React, { useRef, useState, useEffect, useContext } from 'react'
 
@@ -6,6 +7,8 @@ import React, { useRef, useState, useEffect, useContext } from 'react'
  * @description [地堡跨组件通信协议] 用于在行（Row）与单元格（Cell）之间共享 Form 传感器的物理句柄。
  */
 const EditableContext = React.createContext(null)
+
+const SortableItem = SortableElement((props) => <tr {...props} />)
 
 /**
  * @component EditableRow
@@ -33,7 +36,7 @@ export const EditableRow = ({ index, record, ...props }) => {
     return (
         <Form form={form} component={false} onValuesChange={(changedValue, allValue) => props?.onValuesChange?.({ changedValue, allValue, form })}>
             <EditableContext.Provider value={form}>
-                <tr {...props} />
+                <SortableItem index={index} {...props} />
             </EditableContext.Provider>
         </Form>
     )
