@@ -88,7 +88,7 @@ export const MyForm = ({ formItems, externalForm, labelCol, wrapperCol, tablePro
     const form = externalForm || internalForm
 
     return (
-        <Form form={form} layout={layout} preserve={false} labelCol={labelCol} wrapperCol={wrapperCol} onValuesChange={onValuesChange}>
+        <Form form={form} layout={layout} preserve={false} labelCol={labelCol} wrapperCol={wrapperCol} onValuesChange={onValuesChange} scrollToFirstError={{ behavior: 'smooth', block: 'center' }}>
             <Row gutter={[24, 0]}>
                 <FormRenderer form={form} formItems={formItems} tableProps={tableProps} />
             </Row>
