@@ -25,6 +25,7 @@ const {{this.action}} = () => {
             }
             fetching = true
             const response = await {{{this.request}}}
+            fetching = false
             if({{{../responseSuccess}}}){
                 refresh()
             }
