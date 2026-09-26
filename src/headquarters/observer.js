@@ -19,9 +19,15 @@ module.exports = bunker => {
         }
     })
 
-    settingObserver.on('change', file => {
-        if (file.endsWith('config.js')) {
-            bunker.reboot()
-        }
-    })
+    let rebootTimer = null
+    const debouncedReboot = file => {
+        clearTimeout(rebootTimer)
+        rebootTimer = setTimeout(() => {
+            if (file.endsWith('config.js')) {
+                bunker.reboot()
+            }
+        }, 300)
+    }
+
+    settingObserver.on('change', file => debouncedReboot(file))
 }
