@@ -39,10 +39,14 @@ const flattenFormItems = items => {
  *   formItems={[{ label: '截止日期', name: 'deadline', type: 'date' }]}
  * />
  */
-export const MyModalForm = ({ extra, width, title, layout, okText, options, footer, submit, record, visible, setModal, labelCol, modalItems, wrapperCol, cancelText, tableConfig, okButtonProps, onValuesChange, handleModalTableOk }) => {
+export const MyModalForm = ({ extra, width, title, layout, okText, options, footer, submit, record, visible, setModal, labelCol, modalItems, wrapperCol, cancelText, tableConfig, okButtonProps, renderAction, onValuesChange, handleModalTableOk }) => {
 
     const rowKey = tableConfig?.rowKey || 'id'
-    const formItems = useMemo(() => modalItems.map(item => ({ ...item, ...(['select'].includes(item.type) ? { options: item.options ?? options?.[item.name] ?? [] } : {}) })), [modalItems, options])
+    const formItems = useMemo(() => modalItems.map(item => ({
+        ...item,
+        ...(item.renderAction ? { render: renderAction?.[item.name] } : {}),
+        ...(['select'].includes(item.type) ? { options: item.options ?? options?.[item.name] ?? [] } : {})
+    })), [options, modalItems, renderAction])
 
     const [form] = Form.useForm()
     const [pending, setPending] = useState(false)

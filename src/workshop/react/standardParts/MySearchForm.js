@@ -32,11 +32,15 @@ import { SearchOutlined, RedoOutlined } from '@ant-design/icons'
  *   formItems={[{ label: '状态', name: 'status', type: 'select', options: [...] }]}
  * />
  */
-export const MySearchForm = ({ form, search, options, loading, labelCol, setSearch, formItems, showLimit = 7, initialValues, initialParams, customReset, extra, customFinish, onValuesChange, syncUrlParams = true, defaultPageSize = 10 }) => {
+export const MySearchForm = ({ form, extra, search, options, loading, labelCol, setSearch, formItems, showLimit = 7, initialValues, initialParams, customReset, customFinish, renderAction, onValuesChange, syncUrlParams = true, defaultPageSize = 10 }) => {
 
     const [limit, setLimit] = useState(showLimit)
 
-    const searchItems = useMemo(() => formItems.map(item => ({ ...item, ...(['select'].includes(item.type) ? { options: item.options ?? options?.[item.name] ?? [] } : {}) })), [formItems, options])
+    const searchItems = useMemo(() => formItems.map(item => ({
+        ...item,
+        ...(item.renderAction ? { render: renderAction?.[item.name] } : {}),
+        ...(['select'].includes(item.type) ? { options: item.options ?? options?.[item.name] ?? [] } : {})
+    })), [options, formItems, renderAction])
 
     /**
      * @function handleReset
