@@ -55,15 +55,18 @@ import { useRef, useMemo, useEffect, useCallback } from 'react'
  *   }}
  * />
  */
-export const MyTable = ({ size, query, total, search, autoScroll, onChange, pagination, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', loading = false, dataSource = [], scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
+export const MyTable = ({ size, query, total, search, autoScroll, onChange, pagination, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', loading = false, dataSource = [], draggable = false, scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
 
     const tableRef = useRef(null)
     const hasScrolledRef = useRef(false)
+    const dataSourceRef = useRef(dataSource)
+    dataSourceRef.current = dataSource
 
     /**
      * @description [权限侦察] 自动扫描列配置。若存在 editType 型号，则激活“骇入模式（编辑模式）”。
      */
     const isEditable = useMemo(() => columns.some(col => col.editType), [columns])
+    const hasCustomComponents = isEditable || draggable
 
     /**
      * @function handleSave
@@ -73,27 +76,36 @@ export const MyTable = ({ size, query, total, search, autoScroll, onChange, pagi
      * @param {Object} row - 修改后的行片段
      */
     const handleSave = useCallback((row) => {
-        setDataSource(prev => {
-            const newData = [...prev]
-            const index = newData.findIndex(item => row[rowKey] === item[rowKey])
-            const item = newData[index]
-            newData.splice(index, 1, { ...item, ...row })
-            customSave?.({ ...item, ...row }, newData)
-            return newData
-        })
+        const prev = dataSourceRef.current
+        const index = prev.findIndex(item => row[rowKey] === item[rowKey])
+        if (index === -1) return
+        const item = prev[index]
+        const updatedRow = { ...item, ...row }
+        const newData = [...prev]
+        newData.splice(index, 1, updatedRow)
+        setDataSource(newData)
+        customSave?.(updatedRow, newData)
     }, [rowKey, customSave, setDataSource])
 
     /**
      * @constant components
      * @description [零部件注册] 注入地堡特有的可编辑 Row 和 Cell 单元。
      */
-    const components = useMemo(() => ({
-        body: {
-            row: EditableRow,
-            cell: EditableCell,
-            wrapper: props => <DraggableContainer props={props} setDataSource={setDataSource} />,
+    const components = useMemo(() => {
+        if (!hasCustomComponents) return undefined
+        const c = { body: {} }
+        // 1. 只有有编辑列时，才挂载行内编辑单元
+        if (isEditable) {
+            c.body.row = EditableRow
+            c.body.cell = EditableCell
         }
-    }), [setDataSource])
+        // 2. 只有开启了拖拽，才挂载拖拽容器
+        if (draggable) {
+            c.body.wrapper = props => <DraggableContainer props={props} customSave={customSave} setDataSource={setDataSource} dataSourceRef={dataSourceRef} />
+        }
+        return c
+    }, [isEditable, draggable, customSave, setDataSource])
+
 
     /**
      * @constant mergedColumns
@@ -183,9 +195,9 @@ export const MyTable = ({ size, query, total, search, autoScroll, onChange, pagi
                 columns={mergedColumns}
                 dataSource={dataSource}
                 size={size ?? 'middle'}
+                components={components}
                 rowSelection={rowSelection}
                 pagination={paginationConfig}
-                components={isEditable ? components : undefined}
                 // 💡 信号注入：将行监听协议绑定至底层 tr
                 onRow={(record, index) => ({ record, index, ...(typeof lineFormChange === 'function' ? { onValuesChange: lineFormChange } : {}) })}
                 rowClassName={(record, index) => {

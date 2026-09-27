@@ -9,11 +9,14 @@ const arrayMoveImmutable = (array, oldIndex, newIndex) => {
     return newArray
 }
 
-export const DraggableContainer = ({ props, setDataSource }) => {
+export const DraggableContainer = ({ props, customSave, setDataSource, dataSourceRef }) => {
 
     const onSortEnd = ({ oldIndex, newIndex }) => {
         if (oldIndex !== newIndex) {
-            setDataSource(prev => arrayMoveImmutable(prev.slice(), oldIndex, newIndex))
+            const currentData = dataSourceRef?.current || []
+            const sortedDataSource = arrayMoveImmutable(currentData.slice(), oldIndex, newIndex)
+            setDataSource(sortedDataSource)
+            customSave?.(sortedDataSource)
         }
     }
 
