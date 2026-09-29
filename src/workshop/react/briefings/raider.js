@@ -53,7 +53,7 @@ module.exports = `
     - 必填校验: 若图片中 label 前有红色星号，必须加入 rules:[{required:true,message:'xxx不能为空'}]。
 
 ## 3. 页签 (Tabs)
-- 结构: tabs: [{label:'页签名',key:'页签英文'}]
+- 结构: tabs: [{tab:'页签名',key:'页签英文'}]
 
 ## 4. 下拉选项字典 (OptionDict)
 - 结构: optionDict: { 字段英文名Options: [] }

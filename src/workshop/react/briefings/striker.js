@@ -18,7 +18,7 @@ module.exports = `
 ## 零部件构筑规范 (Component Specifications)
 
 ## 标签页 (tabs)
-- **基础格式**: [{ label: '文本', key: 'englishName' }]
+- **基础格式**: [{ tab: '文本', key: 'englishName' }]
 - **识别条件**: 底部有显著长横线 (Ink Bar) 或呈现包裹感 (Card style) 时判定。
 - **排除项**: 表格上方的独立按钮必须归类为 [functionButton]。
 

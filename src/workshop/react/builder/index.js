@@ -50,8 +50,8 @@ module.exports = ({ template, logistics, headquarters }) => {
 
         const hooksLib = ['useTableQuery']
         const utilsLib = ['timeRender', 'moneyRender']
-        const reactLib = ['useState', 'useEffect', 'useRef', 'useMemo']
         const componentsLib = ['MyTable', 'MyImage', 'MyModalForm', 'MySearchForm']
+        const reactLib = ['useRef', 'useMemo', 'useState', 'useEffect', 'useContext']
         const antdLib = ['Tag', 'Card', 'Badge', 'Space', 'Modal', 'Alert', 'Image', 'Table', 'Input', 'Select', 'Button']
 
         const usedAntd = antdLib.filter(name => new RegExp(`\\b${name}\\b`).test(bodyCode))
@@ -67,6 +67,7 @@ module.exports = ({ template, logistics, headquarters }) => {
             ...usedComps.map(comp => `import { ${comp} } from '../../components/${comp}'`),
             ...(module === 'index' ? [
                 `import { request } from '../../utils/request'`,
+                `import { GlobalContext } from '../../layouts'`,
                 `import { formatQuery } from '../../utils/utils'`,
                 `import { ${hasTabs ? 'tabs, ' : ''}${hasFormItems ? 'formItems, ' : ''}modalItems, tableColumns} from './resource'`
             ] : [

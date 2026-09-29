@@ -20,12 +20,12 @@
                 "items": {
                     "type": "object",
                     "required": [
-                        "label",
+                        "tab",
                         "key"
                     ],
                     "additionalProperties": false,
                     "properties": {
-                        "label": {
+                        "tab": {
                             "type": "string"
                         },
                         "key": {
