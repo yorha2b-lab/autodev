@@ -36,17 +36,12 @@ const flattenFormItems = items => {
  *   title='构筑新模块'
  *   visible={visible}
  *   submit={async (vals) => await save(vals)}
- *   formItems={[{ label: '截止日期', name: 'deadline', type: 'date' }]}
+ *   modalItems={[{ label: '截止日期', name: 'deadline', type: 'date' }]}
  * />
  */
 export const MyModalForm = ({ extra, width, title, layout, okText, options, footer, submit, record, visible, setModal, labelCol, modalItems, wrapperCol, cancelText, tableConfig, okButtonProps, renderAction, onValuesChange, handleModalTableOk }) => {
 
     const rowKey = tableConfig?.rowKey || 'id'
-    const formItems = useMemo(() => modalItems.map(item => ({
-        ...item,
-        ...(item.renderAction ? { render: renderAction?.[item.name] } : {}),
-        ...(['select'].includes(item.type) ? { options: item.options ?? options?.[item.name] ?? [] } : {})
-    })), [options, modalItems, renderAction])
 
     const [form] = Form.useForm()
     const [pending, setPending] = useState(false)
@@ -62,7 +57,7 @@ export const MyModalForm = ({ extra, width, title, layout, okText, options, foot
     useEffect(() => {
         if (visible && !prevVisibleRef.current) {
             if (record && Object.keys(record).length > 0) {
-                const itemMap = new Map(flattenFormItems(formItems).map(i => [i.name, i]))
+                const itemMap = new Map(flattenFormItems(modalItems).map(i => [i.name, i]))
                 const initialData = {}
                 Object.entries(record).forEach(([key, value]) => {
                     const config = itemMap.get(key)
@@ -86,7 +81,7 @@ export const MyModalForm = ({ extra, width, title, layout, okText, options, foot
             }
         }
         prevVisibleRef.current = visible
-    }, [visible, record, form, formItems])
+    }, [visible, record, form, modalItems])
 
     /**
      * @async
@@ -98,7 +93,7 @@ export const MyModalForm = ({ extra, width, title, layout, okText, options, foot
         try {
             const values = await form.validateFields()
             const formattedValues = { ...values }
-            flattenFormItems(formItems).forEach(item => {
+            flattenFormItems(modalItems).forEach(item => {
                 const val = formattedValues[item.name]
                 if (item.type?.includes('date') && val) {
                     if (Array.isArray(val)) {
@@ -159,10 +154,12 @@ export const MyModalForm = ({ extra, width, title, layout, okText, options, foot
             {extra?.header?.(ctx)}
             <MyForm
                 layout={layout}
+                options={options}
                 externalForm={form}
                 labelCol={labelCol}
-                formItems={formItems}
+                formItems={modalItems}
                 wrapperCol={wrapperCol}
+                renderAction={renderAction}
                 tableProps={{ tableConfig, setModalTable, setSelectedTableRows }}
                 onValuesChange={(changed, all) => onValuesChange?.({ changed, all, form, record })}
             />

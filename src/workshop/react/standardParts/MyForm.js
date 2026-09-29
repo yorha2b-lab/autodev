@@ -43,10 +43,10 @@ const ACTION_PROCESSORS = {
     // prefix: (item) => ({ props: { prefix: <Icon type={item.prefix} /> } }),
 }
 
-const FormRenderer = ({ form, formItems, tableProps = {} }) => {
+const FormRenderer = ({ form, options, formItems, renderAction, tableProps = {} }) => {
 
     // 定义核心渲染逻辑，供递归使用
-    const renderCore = items => <FormRenderer form={form} formItems={items} tableProps={tableProps} />
+    const renderCore = items => <FormRenderer form={form} options={options} formItems={items} renderAction={renderAction} tableProps={tableProps} />
 
     // 定义单项动作注入逻辑
     const getRenderItemProps = item => {
@@ -61,28 +61,35 @@ const FormRenderer = ({ form, formItems, tableProps = {} }) => {
     }
 
     return formItems.map((item, index) => {
+        // 💡 保持纯粹不可变：通过解构浅拷贝，绝不污染原始 formItems 对象！
+        const processedItem = {
+            ...item,
+            ...(item.renderAction && renderAction?.[item.name] ? { render: renderAction[item.name] } : {}),
+            ...(['select', 'radio', 'checkbox'].includes(item.type) && !item.options ? { options: options?.[item.name] || [] } : {})
+        }
+
         // 情况 A：发现容器型零件 (含有 layoutType)
-        if (item.layoutType && LAYOUT_PROCESSORS[item.layoutType]) {
-            const Layout = LAYOUT_PROCESSORS[item.layoutType] ?? LAYOUT_PROCESSORS.default
+        if (processedItem.layoutType && LAYOUT_PROCESSORS[processedItem.layoutType]) {
+            const Layout = LAYOUT_PROCESSORS[processedItem.layoutType] ?? LAYOUT_PROCESSORS.default
             return (
                 <Layout
-                    item={item}
-                    key={item.name || index}
-                    renderCore={renderCore} // 注入渲染能力，让 Layout 自己去 Map
+                    item={processedItem}
+                    key={processedItem.name || index}
+                    renderCore={renderCore}
                 />
             )
         }
 
         // 情况 B：标准作战零件
         return (
-            <Col span={item.span ?? 6} key={item.name || index}>
-                <MyBaseForm item={{ ...item, ...getRenderItemProps(item) }} form={form} />
+            <Col span={processedItem.span ?? 6} key={processedItem.name || index}>
+                <MyBaseForm item={{ ...processedItem, ...getRenderItemProps(processedItem) }} form={form} />
             </Col>
         )
     })
 }
 
-export const MyForm = ({ formItems, externalForm, labelCol, wrapperCol, tableProps, layout = 'horizontal', onValuesChange }) => {
+export const MyForm = ({ formItems = [], externalForm, labelCol, wrapperCol, tableProps, onValuesChange, layout = 'horizontal', options = {}, renderAction = {} }) => {
 
     const [internalForm] = Form.useForm()
     const form = externalForm || internalForm
@@ -90,7 +97,7 @@ export const MyForm = ({ formItems, externalForm, labelCol, wrapperCol, tablePro
     return (
         <Form form={form} layout={layout} preserve={false} labelCol={labelCol} wrapperCol={wrapperCol} onValuesChange={onValuesChange} scrollToFirstError={{ behavior: 'smooth', block: 'center' }}>
             <Row gutter={[24, 0]}>
-                <FormRenderer form={form} formItems={formItems} tableProps={tableProps} />
+                <FormRenderer form={form} options={options} formItems={formItems} renderAction={renderAction} tableProps={tableProps} />
             </Row>
         </Form>
     )
