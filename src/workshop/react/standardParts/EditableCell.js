@@ -20,7 +20,7 @@ const SortableItem = SortableElement((props) => <tr {...props} />)
  * @param {Object} props.record - 初始物资包（当前行数据）
  * @param {Function} [props.onValuesChange] - 联动传感：监听行内任何零部件的值变动
  */
-export const EditableRow = ({ index, record, ...props }) => {
+export const EditableRow = ({ index, record, draggable, ...props }) => {
 
     const [form] = Form.useForm()
 
@@ -36,7 +36,7 @@ export const EditableRow = ({ index, record, ...props }) => {
     return (
         <Form form={form} component={false} onValuesChange={(changedValue, allValue) => props?.onValuesChange?.({ changedValue, allValue, form })}>
             <EditableContext.Provider value={form}>
-                <SortableItem index={index} {...props} />
+                {draggable ? <SortableItem index={index} {...props} /> : <tr {...props} />}
             </EditableContext.Provider>
         </Form>
     )
