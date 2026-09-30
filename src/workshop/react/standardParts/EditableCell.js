@@ -60,7 +60,7 @@ export const EditableRow = ({ index, record, ...props }) => {
  * @param {boolean} [props.defaultEdit] - 持久化模式：是否默认始终开启编辑状态
  * @param {string} [props.editType='text'] - 零部件型号（text/number/select/checkbox）
  */
-export const EditableCell = ({ title, record, editable, disabled, children, dataIndex, placeholder, handleSave, defaultEdit, rules = [], options = [], editType = 'text', ...restProps }) => {
+export const EditableCell = ({ title, record, editable, disabled, children, dataIndex, placeholder, handleSave, defaultEdit, editRender, rules = [], options = [], editType = 'text', ...restProps }) => {
 
     const inputRef = useRef(null)
     const form = useContext(EditableContext)
@@ -125,6 +125,9 @@ export const EditableCell = ({ title, record, editable, disabled, children, data
         case 'number':
             inputNode = <InputNumber ref={inputRef} onPressEnter={save} {...commonProps} />
             break
+        case 'custom':
+            inputNode = editRender({ form, record, save, dataIndex, disabled, toggleEdit, commonProps })
+            break
         case 'checkbox':
             inputNode = (
                 <div tabIndex={-1} onBlur={e => {
@@ -151,7 +154,7 @@ export const EditableCell = ({ title, record, editable, disabled, children, data
             {editable ? (
                 editing || defaultEdit ? (
                     // 骇入模式：渲染输入零件
-                    <Form.Item {...(['checkbox'].includes(editType) ? { style: formProps.style } : formProps)}>
+                    <Form.Item {...(['custom', 'checkbox'].includes(editType) ? { style: formProps.style } : formProps)}>
                         {inputNode}
                     </Form.Item>
                 ) : (

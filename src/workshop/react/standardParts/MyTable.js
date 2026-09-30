@@ -55,7 +55,7 @@ import { useRef, useMemo, useEffect, useCallback } from 'react'
  *   }}
  * />
  */
-export const MyTable = ({ size, query, total, search, autoScroll, onChange, pagination, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', loading = false, dataSource = [], draggable = false, scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
+export const MyTable = ({ size, query, total, search, options, autoScroll, onChange, pagination, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', loading = false, dataSource = [], draggable = false, scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
 
     const tableRef = useRef(null)
     const hasScrolledRef = useRef(false)
@@ -123,22 +123,17 @@ export const MyTable = ({ size, query, total, search, autoScroll, onChange, pagi
             return {
                 ...col,
                 onCell: (record) => ({
+                    ...col,
                     record,
                     handleSave,
-                    title: col.title,
-                    rules: col.rules,
-                    options: col.options,
-                    editType: col.editType,
-                    dataIndex: col.dataIndex,
-                    placeholder: col.placeholder,
-                    defaultEdit: col.defaultEdit,
+                    options: col.options ?? options?.[col.dataIndex],
                     // 💡 条件防御逻辑：支持针对单行的物理锁定
                     disabled: col.specialDisabled ? record.disabled : col.disabled,
                     editable: col.specialEditType ? record.needEdit && !!col.editType : !!col.editType,
                 }),
             }
         })
-    }, [columns, handleSave, renderAction])
+    }, [columns, options, handleSave, renderAction])
 
     /**
      * @constant paginationConfig

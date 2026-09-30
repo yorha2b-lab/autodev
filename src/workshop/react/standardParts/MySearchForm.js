@@ -32,7 +32,7 @@ import { SearchOutlined, RedoOutlined } from '@ant-design/icons'
  *   formItems={[{ label: '状态', name: 'status', type: 'select', options: [...] }]}
  * />
  */
-export const MySearchForm = ({ form, extra, search, options, loading, labelCol, setSearch, formItems, showLimit = 7, initialValues, initialParams, customReset, customFinish, renderAction, onValuesChange, syncUrlParams = true, defaultPageSize = 10 }) => {
+export const MySearchForm = ({ form, extra, search, options, loading, labelCol, setSearch, formItems, showLimit = 7, initialValues = {}, initialParams = {}, customReset, customFinish, renderAction, onValuesChange, syncUrlParams = true, defaultPageSize = 10 }) => {
 
     const [limit, setLimit] = useState(showLimit)
 
