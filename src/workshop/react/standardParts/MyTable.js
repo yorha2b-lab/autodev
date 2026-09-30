@@ -55,7 +55,7 @@ import { useRef, useMemo, useEffect, useCallback } from 'react'
  *   }}
  * />
  */
-export const MyTable = ({ size, query, total, search, options, autoScroll, onChange, pagination, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', loading = false, dataSource = [], draggable = false, scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
+export const MyTable = ({ size, query, total, search, options, autoScroll, onChange, pagination, editRender = {}, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', loading = false, dataSource = [], draggable = false, scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
 
     const tableRef = useRef(null)
     const hasScrolledRef = useRef(false)
@@ -115,10 +115,37 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
     const mergedColumns = useMemo(() => {
         return columns.map(col => {
             if (!col.editType) {
+                let currentCol = { ...col }
                 if (col.renderAction && renderAction?.[col.dataIndex]) {
-                    return { ...col, render: renderAction[col.dataIndex] }
+                    currentCol.render = renderAction[col.dataIndex]
                 }
-                return col
+                if (col.search) {
+                    currentCol = {
+                        ...currentCol,
+                        filterSearch: true,
+                        onFilter: (value, record) => col.remote ? undefined : col.customFilter({ value, record, dataIndex: col.dataIndex }),
+                        filterDropdown: ({ close, confirm, selectedKeys, clearFilters, setSelectedKeys }) => (
+                            <Space direction='vertical' style={{ padding: 12 }}>
+                                {col.customFilterDropdown({ dataIndex: col.dataIndex, selectedKeys, setSelectedKeys })}
+                                <div style={{ display: 'flex' }}>
+                                    <a style={{ marginLeft: 'auto', marginRight: 8 }} onClick={() => {
+                                        if (col.remote) {
+                                            setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: col.formatFilter?.(selectedKeys) ?? selectedKeys?.toString() }))
+                                        }
+                                        confirm()
+                                    }}>确定</a>
+                                    <a onClick={() => {
+                                        if (col.remote) {
+                                            setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: undefined }))
+                                        }
+                                        clearFilters()
+                                    }}>重置</a>
+                                </div>
+                            </Space>
+                        ),
+                    }
+                }
+                return currentCol
             }
             return {
                 ...col,
@@ -126,6 +153,7 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
                     ...col,
                     record,
                     handleSave,
+                    editRender: editRender?.[col.dataIndex],
                     options: col.options ?? options?.[col.dataIndex],
                     // 💡 条件防御逻辑：支持针对单行的物理锁定
                     disabled: col.specialDisabled ? record.disabled : col.disabled,
@@ -133,7 +161,7 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
                 }),
             }
         })
-    }, [columns, options, handleSave, renderAction])
+    }, [columns, options, handleSave, editRender, renderAction])
 
     /**
      * @constant paginationConfig
