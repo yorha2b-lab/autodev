@@ -1,5 +1,5 @@
 import { AliyunOSSUpload } from './AliyunOSSUpload'
-import { Tree, Radio, Input, Upload, Select, Cascader, Checkbox, DatePicker, InputNumber, TreeSelect, AutoComplete } from 'antd'
+import { Tree, Form, Radio, Input, Upload, Select, Cascader, Checkbox, DatePicker, InputNumber, TreeSelect, AutoComplete } from 'antd'
 
 /**
  * @function formNode
