@@ -147,7 +147,7 @@ module.exports = ({ template, logistics, headquarters }) => {
                 hasRowSelection: pageConfig.table.rowSelection,
                 formItems: hasFormItems ? (hasTabs ? 'formItems[activeKey]' : 'formItems') : '[]',
                 operations: pageConfig.table.operation?.sort((a, b) => a.action.length - b.action.length) || [],
-                initParams: `{ ${hasTabs ? 'type: tabs[0].key ,' : ''}${hasPagination ? 'pageNo: 1 , pageSize: 10' : ''}}`,
+                initParams: `{ ${hasTabs ? 'type: activeKey,' : ''}${hasPagination ? 'pageNo: 1 , pageSize: 10' : ''}}`,
                 uri: needMock ? `request('/api/${fileName}', { method: 'POST', body: params })` : 'BUNKER_API_ANCHOR_pages',
             }
 
