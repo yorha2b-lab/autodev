@@ -1,4 +1,4 @@
-import { Table } from 'antd'
+import { Table, Space } from 'antd'
 import { DraggableContainer } from './DraggableContainer'
 import { EditableRow, EditableCell } from './EditableCell'
 import { useRef, useMemo, useEffect, useCallback } from 'react'
