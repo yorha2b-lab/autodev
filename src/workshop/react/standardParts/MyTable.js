@@ -55,7 +55,7 @@ import { useRef, useMemo, useEffect, useCallback } from 'react'
  *   }}
  * />
  */
-export const MyTable = ({ size, query, total, search, options, autoScroll, onChange, setSearch, pagination, editRender = {}, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', loading = false, dataSource = [], draggable = false, scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
+export const MyTable = ({ size, query, total, search, options, autoScroll, onChange, editingKey, setSearch, pagination, editRender = {}, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', loading = false, dataSource = [], draggable = false, scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
 
     const tableRef = useRef(null)
     const hasScrolledRef = useRef(false)
@@ -152,7 +152,9 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
                 onCell: (record) => ({
                     ...col,
                     record,
+                    rowKey,
                     handleSave,
+                    editingKey,
                     editRender: editRender?.[col.dataIndex],
                     options: col.options ?? options?.[col.dataIndex],
                     // 💡 条件防御逻辑：支持针对单行的物理锁定
