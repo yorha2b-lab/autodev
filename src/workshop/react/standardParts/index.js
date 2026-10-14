@@ -1,4 +1,6 @@
+import { MyBaseForm } from './MyBaseForm'
 import { AliyunOSSUpload } from './AliyunOSSUpload'
+import { AliyunOSSDragger } from './AliyunOSSDragger'
 import { Tree, Form, Radio, Input, Upload, Select, Cascader, Checkbox, DatePicker, InputNumber, TreeSelect, AutoComplete } from 'antd'
 
 /**
@@ -21,9 +23,10 @@ export const formNode = ({ item }) => {
     if (item.type === 'group' && Array.isArray(item.groups)) {
         return (
             <Input.Group compact style={{ width: item.width ?? '100%', display: 'flex', ...item.style }}>
-                {item.groups.map(subItem => (
-                    <Form.Item noStyle key={subItem.name} name={subItem.name} rules={subItem.rules} initialValue={subItem.value}>
-                        {formNode({ item: subItem })}
+                {item.groups.map((subItem, ind) => (
+                    <Form.Item noStyle key={subItem.name}>
+                        <div style={{ flex: 1, minWidth: 0, marginRight: 8 }}><MyBaseForm item={subItem} key={subItem.name} /></div>
+                        {ind < item.groups.length - 1 && <span style={{ color: '#888', whiteSpace: 'nowrap', marginRight: 8 }}>{item.separator}</span>}
                     </Form.Item>
                 ))}
             </Input.Group>
@@ -42,6 +45,7 @@ export const formNode = ({ item }) => {
         number: <InputNumber  {...commonProps} />,
         default: <Input allowClear {...commonProps} />,
         ossUpload: <AliyunOSSUpload {...commonProps} />,
+        dragger: <AliyunOSSDragger {...item.uploadProps} />,
         auto: <AutoComplete options={item.options} {...commonProps} />,
         radio: <Radio.Group options={item.options} {...commonProps} />,
         tree: <Tree checkable treeData={item.options} {...commonProps} />,
