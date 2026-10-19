@@ -16,7 +16,7 @@ export const DraggableContainer = ({ props, customSave, setDataSource, dataSourc
             const currentData = dataSourceRef?.current || []
             const sortedDataSource = arrayMoveImmutable(currentData.slice(), oldIndex, newIndex)
             setDataSource(sortedDataSource)
-            customSave?.(sortedDataSource)
+            customSave?.({}, sortedDataSource)
         }
     }
 
