@@ -78,6 +78,27 @@ export const exportDataToExcel = async ({ url, options, columns, fileName, forma
     } */
 }
 
+export const arrayToTree = (list, levels, keys = { title: 'title', value: 'value', children: 'children' }) => {
+    const tree = []
+    const maps = levels.map(() => new Map())
+    list.forEach(item => {
+        let parent = tree
+        levels.forEach(({ code, name }, index) => {
+            const map = maps[index]
+            const id = item[code]
+            if (!map.has(id)) {
+                const node = { [keys.title]: item[name], [keys.value]: id, ...(index < levels.length - 1 ? { [keys.children]: [] } : {}) }
+                map.set(id, node)
+                parent.push(node)
+            }
+            const node = map.get(id)
+            parent = node[keys.children] ?? []
+        })
+    })
+    return tree
+}
+
+
 export const moneyRender = (value, { decimals = 2, currency = 'CNY', language = 'zh-CN', showSymbol = true } = {}) => {
     if (value === null || value === undefined || value === '') return '-'
     const number = Number(value)
@@ -150,56 +171,4 @@ export const streamDownload = async ({ url, options, headers = { 'Content-Type':
     link.remove()
 
     setTimeout(() => URL.revokeObjectURL(urlObj), 1000)
-}
-
-export const arrayToTree = (list, { levels, keys = { title: 'title', value: 'value', children: 'children' }, getNodeProps, leafKeys }) => {
-
-    const tree = []
-    const maps = levels.map(() => new Map())
-    const { title: titleKey, value: valueKey, children: childrenKey } = keys
-
-    list.forEach(item => {
-        let siblings = tree
-        levels.forEach((level, index) => {
-            const { code, name, disabled, ...customFields } = level
-            const value = item[code]
-            const path = levels.slice(0, index + 1).map(({ code }) => item[code])
-            const mapKey = JSON.stringify(path)
-            const map = maps[index]
-            if (!map.has(mapKey)) {
-                const node = {
-                    [valueKey]: value,
-                    [titleKey]: item[name],
-                    ...customFields,
-                    ...(disabled !== undefined ? { disabled } : {}),
-                    ...(getNodeProps?.(item, index, level) ?? {}),
-                    [childrenKey]: [],
-                }
-                map.set(mapKey, node)
-                siblings.push(node)
-            }
-            const node = map.get(mapKey)
-            siblings = node[childrenKey]
-        })
-    })
-
-    const clean = nodes => {
-        nodes.forEach(node => {
-            const children = node[childrenKey]
-            if (!children.length) {
-                delete node[childrenKey]
-                if (leafKeys) {
-                    Object.keys(node).forEach(key => {
-                        if (!leafKeys.includes(key)) {
-                            // 默认不删除节点属性
-                        }
-                    })
-                }
-            } else {
-                clean(children)
-            }
-        })
-    }
-    clean(tree)
-    return tree
 }
