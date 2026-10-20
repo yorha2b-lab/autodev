@@ -78,6 +78,27 @@ export const exportDataToExcel = async ({ url, options, columns, fileName, forma
     } */
 }
 
+export const moneyRender = (value, { decimals = 2, currency = 'CNY', language = 'zh-CN', showSymbol = true } = {}) => {
+    if (value === null || value === undefined || value === '') return '-'
+    const number = Number(value)
+    if (isNaN(number)) return '-'
+    const options = showSymbol
+        ? { style: 'currency', currency, minimumFractionDigits: decimals }
+        : { style: 'decimal', minimumFractionDigits: decimals, maximumFractionDigits: decimals }
+    return new Intl.NumberFormat(language, options).format(number)
+}
+
+export const formatUnit = (value, { k = 1024, units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB'], decimals = 2 } = {}) => {
+    if (value === null || value === undefined || isNaN(value) || value === 0) {
+        return `0 ${units[0] ?? ''}`
+    }
+    const absValue = Math.abs(value)
+    const i = absValue < 1 ? 0 : Math.floor(Math.log(absValue) / Math.log(k))
+    const index = Math.min(i, units.length - 1)
+    const result = (value / Math.pow(k, index)).toFixed(decimals)
+    return `${parseFloat(result)} ${units[index]}`
+}
+
 export const streamDownload = async ({ url, options, headers = { 'Content-Type': 'application/json' } }, fileName = '下载') => {
 
     const response = await fetch(url, { ...options, headers })
@@ -131,23 +152,54 @@ export const streamDownload = async ({ url, options, headers = { 'Content-Type':
     setTimeout(() => URL.revokeObjectURL(urlObj), 1000)
 }
 
-export const moneyRender = (value, { decimals = 2, currency = 'CNY', language = 'zh-CN', showSymbol = true } = {}) => {
-    if (value === null || value === undefined || value === '') return '-'
-    const number = Number(value)
-    if (isNaN(number)) return '-'
-    const options = showSymbol
-        ? { style: 'currency', currency, minimumFractionDigits: decimals }
-        : { style: 'decimal', minimumFractionDigits: decimals, maximumFractionDigits: decimals }
-    return new Intl.NumberFormat(language, options).format(number)
-}
+export const arrayToTree = (list, { levels, keys = { title: 'title', value: 'value', children: 'children' }, getNodeProps, leafKeys }) => {
 
-export const formatUnit = (value, { k = 1024, units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB'], decimals = 2 } = {}) => {
-    if (value === null || value === undefined || isNaN(value) || value === 0) {
-        return `0 ${units[0] ?? ''}`
+    const tree = []
+    const maps = levels.map(() => new Map())
+    const { title: titleKey, value: valueKey, children: childrenKey } = keys
+
+    list.forEach(item => {
+        let siblings = tree
+        levels.forEach((level, index) => {
+            const { code, name, disabled, ...customFields } = level
+            const value = item[code]
+            const path = levels.slice(0, index + 1).map(({ code }) => item[code])
+            const mapKey = JSON.stringify(path)
+            const map = maps[index]
+            if (!map.has(mapKey)) {
+                const node = {
+                    [valueKey]: value,
+                    [titleKey]: item[name],
+                    ...customFields,
+                    ...(disabled !== undefined ? { disabled } : {}),
+                    ...(getNodeProps?.(item, index, level) ?? {}),
+                    [childrenKey]: [],
+                }
+                map.set(mapKey, node)
+                siblings.push(node)
+            }
+            const node = map.get(mapKey)
+            siblings = node[childrenKey]
+        })
+    })
+
+    const clean = nodes => {
+        nodes.forEach(node => {
+            const children = node[childrenKey]
+            if (!children.length) {
+                delete node[childrenKey]
+                if (leafKeys) {
+                    Object.keys(node).forEach(key => {
+                        if (!leafKeys.includes(key)) {
+                            // 默认不删除节点属性
+                        }
+                    })
+                }
+            } else {
+                clean(children)
+            }
+        })
     }
-    const absValue = Math.abs(value)
-    const i = absValue < 1 ? 0 : Math.floor(Math.log(absValue) / Math.log(k))
-    const index = Math.min(i, units.length - 1)
-    const result = (value / Math.pow(k, index)).toFixed(decimals)
-    return `${parseFloat(result)} ${units[index]}`
+    clean(tree)
+    return tree
 }
