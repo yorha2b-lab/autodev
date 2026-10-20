@@ -1,18 +1,20 @@
 import { SortableElement } from 'react-sortable-hoc'
-import { Form, Input, InputNumber, Select, Checkbox } from 'antd'
-import React, { useRef, useState, useEffect, useContext } from 'react'
+import { Form, Input, InputNumber, Select, Checkbox, TreeSelect } from 'antd'
+import { useRef, useState, useEffect, useContext, createContext } from 'react'
 
-const EditableContext = React.createContext(null)
+const EditableContext = createContext(null)
 
 const SortableItem = SortableElement((props) => <tr {...props} />)
 
-export const EditableRow = ({ index, record, draggable, ...props }) => {
+export const EditableRow = ({ index, record, columns, draggable, ...props }) => {
 
     const [form] = Form.useForm()
 
     useEffect(() => {
         if (record) {
-            form.setFieldsValue(record)
+            const modeCol = columns.find(col => col.dataIndex in record && col.mode)
+            const extra = modeCol ? { [modeCol.dataIndex]: record[modeCol.dataIndex]?.toString()?.split(',') || [] } : {}
+            form.setFieldsValue({ ...record, ...extra })
         }
     }, [record])
 
@@ -30,7 +32,7 @@ export const EditableCell = ({ mode, title, record, rowKey, editable, disabled, 
     const inputRef = useRef(null)
     const form = useContext(EditableContext)
 
-    const [editing, setEditing] = useState(false)
+    const [editing, setEditing] = useState(record?.[rowKey] === editingKey)
 
     useEffect(() => {
         if (editing) {
@@ -41,13 +43,16 @@ export const EditableCell = ({ mode, title, record, rowKey, editable, disabled, 
     }, [editing])
 
     const toggleEdit = () => {
-        setEditing(!editing)
-        form.setFieldsValue({ [dataIndex]: record[dataIndex] })
+        setEditing(prev => !prev)
+        form.setFieldsValue({ [dataIndex]: mode ? record[dataIndex]?.toString()?.split(',') || [] : record[dataIndex] })
     }
 
     const save = async () => {
         try {
             const values = await form.validateFields()
+            if (mode) {
+                values[dataIndex] = values[dataIndex].join(',')
+            }
             if (!defaultEdit) {
                 toggleEdit()
             }
@@ -73,12 +78,15 @@ export const EditableCell = ({ mode, title, record, rowKey, editable, disabled, 
     }
 
     switch (editType) {
-        case 'select':
-            inputNode = <Select ref={inputRef} mode={mode} options={options} {...commonProps} />
-            break;
         case 'number':
             inputNode = <InputNumber ref={inputRef} onPressEnter={save} {...commonProps} />
             break
+        case 'select':
+            inputNode = <Select ref={inputRef} mode={mode} options={options} {...commonProps} />
+            break;
+        case 'treeSelect':
+            inputNode = <TreeSelect ref={inputRef} treeData={options} {...commonProps} />
+            break;
         case 'custom':
             inputNode = editRender({ form, record, save, dataIndex, disabled, toggleEdit, commonProps })
             break
@@ -102,15 +110,9 @@ export const EditableCell = ({ mode, title, record, rowKey, editable, disabled, 
     return (
         <td {...restProps}>
             {editable ? (
-                editing || defaultEdit || record[rowKey] === editingKey ? (
-                    <Form.Item {...(['custom', 'checkbox'].includes(editType) ? { style: formProps.style } : formProps)}>
-                        {inputNode}
-                    </Form.Item>
-                ) : (
-                    <div onClick={toggleEdit} className='editable-cell-value-wrap' style={{ paddingRight: 24, minHeight: 32, cursor: 'pointer' }}>
-                        {children}
-                    </div>
-                )
+                editing || defaultEdit || record[rowKey] === editingKey ?
+                    <Form.Item {...(['custom', 'checkbox'].includes(editType) ? { style: formProps.style } : formProps)}>{inputNode}</Form.Item> :
+                    <div onClick={toggleEdit} className='editable-cell-value-wrap' style={{ paddingRight: 24, minHeight: 32, cursor: 'pointer' }}>{children}</div>
             ) : (children)}
         </td>
     )

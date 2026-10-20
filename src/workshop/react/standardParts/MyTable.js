@@ -40,43 +40,43 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
 
     const mergedColumns = useMemo(() => {
         return columns.map(col => {
+            let currentCol = { ...col }
+            if (col.renderAction && renderAction?.[col.dataIndex]) {
+                currentCol.render = renderAction[col.dataIndex]
+            }
+            if (col.search) {
+                currentCol = {
+                    ...currentCol,
+                    filterSearch: true,
+                    onFilter: (value, record) => col.remote ? undefined : col.customFilter({ value, record, dataIndex: col.dataIndex }),
+                    filterDropdown: ({ close, confirm, selectedKeys, clearFilters, setSelectedKeys }) => (
+                        <Space direction='vertical' style={{ padding: 12 }}>
+                            {col.customFilterDropdown({ dataIndex: col.dataIndex, selectedKeys, setSelectedKeys })}
+                            <div style={{ display: 'flex' }}>
+                                <a style={{ marginLeft: 'auto', marginRight: 8 }} onClick={() => {
+                                    if (col.remote) {
+                                        setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: col.formatFilter?.(selectedKeys) ?? selectedKeys?.toString() }))
+                                    }
+                                    confirm()
+                                }}>确定</a>
+                                <a onClick={() => {
+                                    if (col.remote) {
+                                        setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: undefined }))
+                                    }
+                                    clearFilters()
+                                }}>重置</a>
+                            </div>
+                        </Space>
+                    ),
+                }
+            }
             if (!col.editType) {
-                let currentCol = { ...col }
-                if (col.renderAction && renderAction?.[col.dataIndex]) {
-                    currentCol.render = renderAction[col.dataIndex]
-                }
-                if (col.search) {
-                    currentCol = {
-                        ...currentCol,
-                        filterSearch: true,
-                        onFilter: (value, record) => col.remote ? undefined : col.customFilter({ value, record, dataIndex: col.dataIndex }),
-                        filterDropdown: ({ close, confirm, selectedKeys, clearFilters, setSelectedKeys }) => (
-                            <Space direction='vertical' style={{ padding: 12 }}>
-                                {col.customFilterDropdown({ dataIndex: col.dataIndex, selectedKeys, setSelectedKeys })}
-                                <div style={{ display: 'flex' }}>
-                                    <a style={{ marginLeft: 'auto', marginRight: 8 }} onClick={() => {
-                                        if (col.remote) {
-                                            setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: col.formatFilter?.(selectedKeys) ?? selectedKeys?.toString() }))
-                                        }
-                                        confirm()
-                                    }}>确定</a>
-                                    <a onClick={() => {
-                                        if (col.remote) {
-                                            setSearch(prev => ({ ...prev, pageNo: 1, [col.dataIndex]: undefined }))
-                                        }
-                                        clearFilters()
-                                    }}>重置</a>
-                                </div>
-                            </Space>
-                        ),
-                    }
-                }
                 return currentCol
             }
             return {
-                ...col,
+                ...currentCol,
                 onCell: (record) => ({
-                    ...col,
+                    ...currentCol,
                     record,
                     rowKey,
                     handleSave,
@@ -137,7 +137,7 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
                 components={components}
                 rowSelection={rowSelection}
                 pagination={paginationConfig}
-                onRow={(record, index) => ({ record, index, draggable, ...(typeof lineFormChange === 'function' ? { onValuesChange: lineFormChange } : {}) })}
+                onRow={(record, index) => ({ record, index, draggable, columns: mergedColumns, ...(typeof lineFormChange === 'function' ? { onValuesChange: lineFormChange } : {}) })}
                 rowClassName={(record, index) => {
                     const externalClass = typeof rowClassName === 'function' ? rowClassName(record, index) : rowClassName
                     const classes = [externalClass]
