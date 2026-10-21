@@ -2,6 +2,7 @@ import { MyForm } from './MyForm'
 import { Form, Modal } from 'antd'
 import { useMemo, useState } from 'react'
 import { MyModalTable } from './MyModalTable'
+import { flattenFormItems } from '../utils/utils'
 
 export const MyModalForm = ({ extra, width, title, layout, okText, options, footer, submit, record, visible, setModal, labelCol, modalItems, wrapperCol, cancelText, tableConfig, okButtonProps, renderAction, onValuesChange, handleModalTableOk }) => {
 

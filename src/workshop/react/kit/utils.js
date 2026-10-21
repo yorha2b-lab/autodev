@@ -11,6 +11,16 @@ export const parseExcel = async file => {
     return excelData.filter(item => item.length > 0) */
 }
 
+export const flattenFormItems = items => {
+    if (!Array.isArray(items)) return []
+    return items.flatMap(item => {
+        if (item.childItems) {
+            return flattenFormItems(item.childItems)
+        }
+        return item
+    })
+}
+
 export const initOSS = async (url, options) => {
     /* const OSS = require('ali-oss')
     const crypto = require('crypto-js')
@@ -97,7 +107,6 @@ export const arrayToTree = (list, levels, keys = { title: 'title', value: 'value
     })
     return tree
 }
-
 
 export const moneyRender = (value, { decimals = 2, currency = 'CNY', language = 'zh-CN', showSymbol = true } = {}) => {
     if (value === null || value === undefined || value === '') return '-'

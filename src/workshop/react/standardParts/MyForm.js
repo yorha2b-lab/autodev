@@ -1,19 +1,10 @@
 import dayjs from 'dayjs'
 import { MyBaseForm } from './MyBaseForm'
+import { flattenFormItems } from '../utils/utils'
 import { useContext, createContext } from 'react'
 import { Row, Col, Form, Button, Collapse } from 'antd'
 
 const FormContext = createContext({})
-
-const flattenFormItems = items => {
-    if (!Array.isArray(items)) return []
-    return items.flatMap(item => {
-        if (item.childItems) {
-            return flattenFormItems(item.childItems)
-        }
-        return item
-    })
-}
 
 const LAYOUT_PROCESSORS = {
     section: ({ item, renderCore }) => (
