@@ -3,7 +3,7 @@ import { DraggableContainer } from './DraggableContainer'
 import { EditableRow, EditableCell } from './EditableCell'
 import { useRef, useMemo, useEffect, useCallback } from 'react'
 
-export const MyTable = ({ size, query, total, search, options, autoScroll, onChange, editingKey, setSearch, pagination, editRender = {}, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', loading = false, dataSource = [], draggable = false, scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
+export const MyTable = ({ size, query, total, search, options, autoScroll, onChange, editingKey, setSearch, pagination, editRender = {}, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', editMode = 'cellEdit', loading = false, dataSource = [], draggable = false, scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
 
     const tableRef = useRef(null)
     const hasScrolledRef = useRef(false)
@@ -79,6 +79,7 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
                     ...currentCol,
                     record,
                     rowKey,
+                    editMode,
                     handleSave,
                     editingKey,
                     editRender: editRender?.[col.dataIndex],

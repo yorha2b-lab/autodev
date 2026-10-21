@@ -27,12 +27,13 @@ export const EditableRow = ({ index, record, columns, draggable, ...props }) => 
     )
 }
 
-export const EditableCell = ({ mode, title, record, rowKey, editable, disabled, children, dataIndex, editingKey, dependencies, placeholder, handleSave, defaultEdit, editRender, rules = [], options = [], editType = 'text', ...restProps }) => {
+export const EditableCell = ({ mode, title, record, rowKey, editMode, editable, disabled, children, dataIndex, editingKey, dependencies, placeholder, handleSave, defaultEdit, editRender, rules = [], options = [], editType = 'text', ...restProps }) => {
 
     const inputRef = useRef(null)
+    const editingKeyRef = useRef(editingKey)
     const form = useContext(EditableContext)
 
-    const [editing, setEditing] = useState(record?.[rowKey] === editingKey)
+    const [editing, setEditing] = useState(false)
 
     useEffect(() => {
         if (editing) {
@@ -41,6 +42,13 @@ export const EditableCell = ({ mode, title, record, rowKey, editable, disabled, 
             }
         }
     }, [editing])
+
+    useEffect(() => {
+        if (editingKeyRef.current !== editingKey) {
+            editingKeyRef.current = editingKey
+            inputRef.current?.blur()
+        }
+    }, [editingKey])
 
     const toggleEdit = () => {
         setEditing(prev => !prev)
@@ -112,7 +120,7 @@ export const EditableCell = ({ mode, title, record, rowKey, editable, disabled, 
             {editable ? (
                 editing || defaultEdit || record[rowKey] === editingKey ?
                     <Form.Item {...(['custom', 'checkbox'].includes(editType) ? { style: formProps.style } : formProps)}>{inputNode}</Form.Item> :
-                    <div onClick={toggleEdit} className='editable-cell-value-wrap' style={{ paddingRight: 24, minHeight: 32, cursor: 'pointer' }}>{children}</div>
+                    <div {...(editMode === 'cellEdit' ? { onClick: toggleEdit, className: 'editable-cell-value-wrap' } : {})} style={{ paddingRight: 24, minHeight: 32, cursor: 'pointer' }}>{children}</div>
             ) : (children)}
         </td>
     )

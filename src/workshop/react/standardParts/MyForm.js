@@ -1,8 +1,19 @@
+import dayjs from 'dayjs'
 import { MyBaseForm } from './MyBaseForm'
 import { useContext, createContext } from 'react'
 import { Row, Col, Form, Button, Collapse } from 'antd'
 
 const FormContext = createContext({})
+
+const flattenFormItems = items => {
+    if (!Array.isArray(items)) return []
+    return items.flatMap(item => {
+        if (item.childItems) {
+            return flattenFormItems(item.childItems)
+        }
+        return item
+    })
+}
 
 const LAYOUT_PROCESSORS = {
     section: ({ item, renderCore }) => (
@@ -87,10 +98,34 @@ const FormRenderer = ({ form, options, formItems }) => {
     })
 }
 
-export const MyForm = ({ formItems = [], externalForm, labelCol, wrapperCol, tableProps, onValuesChange, layout = 'horizontal', options = {}, renderAction = {} }) => {
+export const MyForm = ({ record, formItems = [], externalForm, labelCol, wrapperCol, tableProps, onValuesChange, layout = 'horizontal', options = {}, renderAction = {} }) => {
 
     const [internalForm] = Form.useForm()
     const form = externalForm || internalForm
+
+    useEffect(() => {
+        if (record && Object.keys(record).length > 0) {
+            const itemMap = new Map(flattenFormItems(formItems).map(i => [i.name, i]))
+            const initialData = {}
+            Object.entries(record).forEach(([key, value]) => {
+                const config = itemMap.get(key)
+                if (config?.type?.includes('date') && value) {
+                    if (Array.isArray(value)) {
+                        initialData[key] = value.map(v => dayjs(v))
+                    } else if (typeof value === 'string' && value.includes(',')) {
+                        initialData[key] = value.split(',').map(v => dayjs(v))
+                    } else {
+                        initialData[key] = dayjs(value)
+                    }
+                } else if ((config?.type === 'select' && config.mode) || config?.type === 'checkbox') {
+                    initialData[key] = Array.isArray(value) ? value : value.split(config.separator ?? ',')
+                } else {
+                    initialData[key] = value
+                }
+            })
+            form.setFieldsValue(initialData)
+        }
+    }, [form, record, formItems])
 
     return (
         <FormContext.Provider value={{ tableProps, renderAction }}>

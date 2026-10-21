@@ -1,18 +1,7 @@
-import dayjs from 'dayjs'
 import { MyForm } from './MyForm'
 import { Form, Modal } from 'antd'
+import { useMemo, useState } from 'react'
 import { MyModalTable } from './MyModalTable'
-import { useRef, useMemo, useState, useEffect } from 'react'
-
-const flattenFormItems = items => {
-    if (!Array.isArray(items)) return []
-    return items.flatMap(item => {
-        if (item.childItems) {
-            return flattenFormItems(item.childItems)
-        }
-        return item
-    })
-}
 
 export const MyModalForm = ({ extra, width, title, layout, okText, options, footer, submit, record, visible, setModal, labelCol, modalItems, wrapperCol, cancelText, tableConfig, okButtonProps, renderAction, onValuesChange, handleModalTableOk }) => {
 
@@ -22,33 +11,6 @@ export const MyModalForm = ({ extra, width, title, layout, okText, options, foot
     const [pending, setPending] = useState(false)
     const [modalTable, setModalTable] = useState({})
     const [selectedTableRows, setSelectedTableRows] = useState([])
-
-    const prevVisibleRef = useRef(false)
-
-    useEffect(() => {
-        if (visible && !prevVisibleRef.current) {
-            if (record && Object.keys(record).length > 0) {
-                const itemMap = new Map(flattenFormItems(modalItems).map(i => [i.name, i]))
-                const initialData = {}
-                Object.entries(record).forEach(([key, value]) => {
-                    const config = itemMap.get(key)
-                    if (config?.type?.includes('date') && value) {
-                        if (Array.isArray(value)) {
-                            initialData[key] = value.map(v => dayjs(v))
-                        } else if (typeof value === 'string' && value.includes(',')) {
-                            initialData[key] = value.split(',').map(v => dayjs(v))
-                        } else {
-                            initialData[key] = dayjs(value)
-                        }
-                    } else {
-                        initialData[key] = value
-                    }
-                })
-                form.setFieldsValue(initialData)
-            }
-        }
-        prevVisibleRef.current = visible
-    }, [visible, record, form, modalItems])
 
     const handleOk = async (extraParams = {}) => {
         try {
@@ -108,6 +70,7 @@ export const MyModalForm = ({ extra, width, title, layout, okText, options, foot
             {modalTable.visible && <MyModalTable rowKey={rowKey} {...modalTable} rowSelection={tableRowSelection} onOk={modalTableOk} setModal={setModalTable} />}
             {extra?.header?.(ctx)}
             <MyForm
+                record={record}
                 layout={layout}
                 options={options}
                 externalForm={form}
