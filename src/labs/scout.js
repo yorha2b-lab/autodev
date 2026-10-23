@@ -112,9 +112,7 @@ module.exports = ({ yorha, dialog }) => {
                 const page = pages.length > 0 ? pages[0] : await globalBrowser.newPage()
 
                 try {
-
                     const browserDialog = { capturedToast: dialog.pod042.capturedToast }
-
                     await page.exposeFunction('nodeTakeScreenshot', async () => {
                         const currentUrl = await page.url()
                         const pageName = derivePageNameFromUrl(currentUrl)

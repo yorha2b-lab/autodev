@@ -20,6 +20,8 @@ module.exports = {
     utilsDir: 'src/utils',
     componentsDir: 'src/components',
 
+    // 指向公司的 PRD 文档 地址
+    prdDoc: '',
     // 指向公司的 Swagger JSON 地址
     apiDoc: '',
     //老项目url
