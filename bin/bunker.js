@@ -53,7 +53,7 @@ program
             ]
         }
         Object.entries(outpost).forEach(([type, items]) => items.forEach(quartermaster[type]))
-        const bunkerCmd = chalk.yellow(`'bunker': 'bunker boot'`)
+        const bunkerCmd = chalk.yellow(`"bunker": "bunker boot"`)
         console.log(chalk.cyan(dialog.bunker.initComplete(bunkerCmd)))
     })
 
