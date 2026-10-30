@@ -30,10 +30,14 @@ const LAYOUT_PROCESSORS = {
 }
 
 const ACTION_PROCESSORS = {
-    addonAfter: (item, { tableConfig, setModalTable, setSelectedTableRows }) => ({
+    addonAfter: (item, { customClick, tableConfig, setModalTable, setSelectedTableRows }) => ({
         props: {
             addonAfter: (
                 <Button onClick={() => {
+                    if (typeof customClick === 'function') {
+                        customClick()
+                        return
+                    }
                     setSelectedTableRows([])
                     setModalTable({ visible: true, title: `选择${item.label}`, ...tableConfig[item.name] })
                 }}>
