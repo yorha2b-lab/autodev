@@ -1,3 +1,5 @@
+import { useContext } from 'react'
+import { TableContext } from './MyTable'
 import { SortableContainer } from 'react-sortable-hoc'
 
 const SortableBody = SortableContainer(props => <tbody {...props} />)
@@ -9,7 +11,9 @@ const arrayMoveImmutable = (array, oldIndex, newIndex) => {
     return newArray
 }
 
-export const DraggableContainer = ({ props, customSave, setDataSource, dataSourceRef }) => {
+export const DraggableContainer = props => {
+
+    const { customSave, setDataSource, dataSourceRef } = useContext(TableContext)
 
     const onSortEnd = ({ oldIndex, newIndex }) => {
         if (oldIndex !== newIndex) {

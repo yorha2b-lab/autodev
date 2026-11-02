@@ -1,7 +1,9 @@
 import { Table, Space } from 'antd'
 import { DraggableContainer } from './DraggableContainer'
 import { EditableRow, EditableCell } from './EditableCell'
-import { useRef, useMemo, useEffect, useCallback } from 'react'
+import { useRef, useMemo, useEffect, useCallback, createContext } from 'react'
+
+export const TableContext = createContext(null)
 
 export const MyTable = ({ size, query, total, search, options, autoScroll, onChange, editingKey, setSearch, pagination, editRender = {}, renderAction, rowClassName, customSave, setDataSource, lineFormChange, columns = [], rowSelection, rowKey = 'id', editMode = 'cellEdit', loading = false, dataSource = [], draggable = false, scroll = { x: 'max-content' }, isLocalPaging = false, ...restProps }) => {
 
@@ -33,10 +35,10 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
             c.body.cell = EditableCell
         }
         if (draggable) {
-            c.body.wrapper = props => <DraggableContainer props={props} customSave={customSave} setDataSource={setDataSource} dataSourceRef={dataSourceRef} />
+            c.body.wrapper = DraggableContainer
         }
         return c
-    }, [isEditable, draggable, customSave, setDataSource])
+    }, [isEditable, draggable])
 
     const mergedColumns = useMemo(() => {
         return columns.map(col => {
@@ -126,27 +128,29 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
 
     return (
         <div ref={tableRef}>
-            <Table
-                {...restProps}
-                rowKey={rowKey}
-                scroll={scroll}
-                loading={loading}
-                onChange={onChange}
-                columns={mergedColumns}
-                dataSource={dataSource}
-                size={size ?? 'middle'}
-                components={components}
-                rowSelection={rowSelection}
-                pagination={paginationConfig}
-                onRow={(record, index) => ({ record, index, draggable, columns: mergedColumns, ...(typeof lineFormChange === 'function' ? { onValuesChange: lineFormChange } : {}) })}
-                rowClassName={(record, index) => {
-                    const externalClass = typeof rowClassName === 'function' ? rowClassName(record, index) : rowClassName
-                    const classes = [externalClass]
-                    if (isEditable) classes.push('editable-row')
-                    if (autoScroll && query?.rowIndex === index) classes.push('search-highlight-row')
-                    return classes.filter(Boolean).join(' ')
-                }}
-            />
+            <TableContext.Provider value={{ customSave, setDataSource, dataSourceRef }}>
+                <Table
+                    {...restProps}
+                    rowKey={rowKey}
+                    scroll={scroll}
+                    loading={loading}
+                    onChange={onChange}
+                    columns={mergedColumns}
+                    dataSource={dataSource}
+                    size={size ?? 'middle'}
+                    components={components}
+                    rowSelection={rowSelection}
+                    pagination={paginationConfig}
+                    onRow={(record, index) => ({ record, index, draggable, columns: mergedColumns, ...(typeof lineFormChange === 'function' ? { onValuesChange: lineFormChange } : {}) })}
+                    rowClassName={(record, index) => {
+                        const externalClass = typeof rowClassName === 'function' ? rowClassName(record, index) : rowClassName
+                        const classes = [externalClass]
+                        if (isEditable) classes.push('editable-row')
+                        if (autoScroll && query?.rowIndex === index) classes.push('search-highlight-row')
+                        return classes.filter(Boolean).join(' ')
+                    }}
+                />
+            </TableContext.Provider>
         </div>
     )
 }
