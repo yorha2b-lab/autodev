@@ -12,8 +12,12 @@ export const EditableRow = ({ index, record, columns, draggable, ...props }) => 
 
     useEffect(() => {
         if (record) {
-            const modeCol = columns.find(col => col.dataIndex in record && col.mode)
-            const extra = modeCol ? { [modeCol.dataIndex]: record[modeCol.dataIndex]?.toString()?.split(',') || [] } : {}
+            const extra = {}
+            columns.forEach(col => {
+                if (col.dataIndex in record && col.mode) {
+                    extra[col.dataIndex] = record[col.dataIndex]?.toString()?.split(',') || []
+                }
+            })
             form.setFieldsValue({ ...record, ...extra })
         }
     }, [record])
