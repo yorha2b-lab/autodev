@@ -48,7 +48,7 @@ export const MyModalForm = ({ extra, width, title, layout, okText, options, foot
     const tableRowSelection = useMemo(() => ({
         selectedRowKeys: selectedTableRows.map(row => row[rowKey]),
         onChange: (selectedRowKeys, selectedRows) => setSelectedTableRows(selectedRows),
-    }), [rowKey, modalTable, selectedTableRows])
+    }), [rowKey, selectedTableRows])
 
     const ctx = { form, record, pending, handleOk, handleCancel, setModal }
 

@@ -10,7 +10,7 @@ const getValueFromEvent = e => {
     return e?.fileList
 }
 
-const renderFormContent = ({ item, prefixName = [] }) => {
+const renderFormContent = ({ item, form, prefixName = [] }) => {
 
     if (!item.name) {
         return <span dangerouslySetInnerHTML={{ __html: item.value }} />
@@ -20,7 +20,7 @@ const renderFormContent = ({ item, prefixName = [] }) => {
 
     const inputNode = (
         <Form.Item noStyle name={namePath} rules={item.rules} dependencies={item.dependencies} initialValue={item.value} {...(['upload', 'ossUpload'].includes(item.type) ? { getValueFromEvent, valuePropName: 'fileList' } : { valuePropName: item.valuePropName })}>
-            {formNode({ item })}
+            {formNode({ item, form })}
         </Form.Item>
     )
 
@@ -60,7 +60,7 @@ export const MyBaseForm = ({ item, form }) => {
                 required={item.required ?? item.rules?.some(v => v.required)}
                 style={{ marginBottom: !item.name ? 0 : undefined, ...item.style }}
             >
-                {item.render ? (typeof item.render === 'function' ? item.render(item, form) : item.render) : renderFormContent({ item })}
+                {item.render ? (typeof item.render === 'function' ? item.render(item, form) : item.render) : renderFormContent({ item, form })}
             </Form.Item>
     )
 }

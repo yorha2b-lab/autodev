@@ -2,6 +2,8 @@
 const { } = useContext(GlobalContext)
 
 const rowKey = 'id'
+const fetchingRef = useRef(false)
+
 {{#if hasFormItems}}
 const [form] = Form.useForm()
 {{/if}}

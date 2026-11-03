@@ -11,6 +11,7 @@ export const MyPopoverTable = ({ api, columns, children, formatter }) => {
         if (loading) return
         setLoading(true)
         const response = await api()
+        setLoading(false)
         const datas = formatter(response)
         setDataSource(datas)
     }

@@ -11,9 +11,9 @@ export const MyModalTable = ({ api, onOk, title, width, footer, visible, operate
 
     const { total, loading, columns, dataSource, search, refresh, setLoading, setSearch, setDataSource } = useTableQuery({ api, cols: modalColumns, initialParams, formatResponse, isLocalPaging })
 
-    const handleSearch = values => setSearch({ ...search, ...values, pageNo: 1 })
+    const handleSearch = values => setSearch(prev => ({ ...prev, ...values, pageNo: 1 }))
 
-    const handleTableChange = (pagination, filters, sorter) => setSearch({ ...search, pageNo: pagination.current, pageSize: pagination.pageSize, orderBy: sorter.column ? sorter.field : undefined })
+    const handleTableChange = (pagination, filters, sorter) => setSearch(prev => ({ ...prev, pageNo: pagination.current, pageSize: pagination.pageSize, orderBy: sorter.column ? sorter.field : undefined }))
 
     const handleOk = async () => {
         if (onOk) {

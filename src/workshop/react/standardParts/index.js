@@ -1,17 +1,68 @@
+import { Fragment } from 'react'
 import { MyBaseForm } from './MyBaseForm'
 import { AliyunOSSUpload } from './AliyunOSSUpload'
-import { Tree, Form, Radio, Input, Upload, Select, Cascader, Checkbox, DatePicker, InputNumber, TreeSelect, AutoComplete } from 'antd'
+import { Tree, Radio, Input, Upload, Select, Cascader, Checkbox, DatePicker, InputNumber, TreeSelect, AutoComplete } from 'antd'
 
-export const formNode = ({ item }) => {
+const componentDict = {
+    date: { Component: DatePicker },
+    number: { Component: InputNumber },
+    ossUpload: { Component: AliyunOSSUpload },
+    default: {
+        Component: Input,
+        props: () => ({ allowClear: true })
+    },
+    daterange: {
+        Component: DatePicker.RangePicker,
+        props: () => ({ placeholder: undefined })
+    },
+    textarea: {
+        Component: Input.TextArea,
+        props: () => ({ autoSize: { minRows: 4 } })
+    },
+    upload: {
+        Component: Upload,
+        props: ({ item }) => ({ ...item.uploadProps })
+    },
+    auto: {
+        Component: AutoComplete,
+        props: ({ item }) => ({ options: item.options })
+    },
+    checkbox: {
+        Component: Checkbox.Group,
+        props: ({ item }) => ({ options: item.options })
+    },
+    radio: {
+        Component: Radio.Group,
+        props: ({ item }) => ({ options: item.options })
+    },
+    treeSelect: {
+        Component: TreeSelect,
+        props: ({ item }) => ({ treeData: item.options })
+    },
+    tree: {
+        Component: Tree,
+        props: ({ item }) => ({ checkable: true, treeData: item.options })
+    },
+    cascader: {
+        Component: Cascader,
+        props: ({ item }) => ({ allowClear: true, showSearch: true, options: item.options })
+    },
+    select: {
+        Component: Select,
+        props: ({ item }) => ({ allowClear: true, showSearch: true, mode: item.mode, options: item.options, optionFilterProp: 'label' })
+    },
+}
+
+export const formNode = ({ item, form }) => {
 
     if (item.type === 'group' && Array.isArray(item.groups)) {
         return (
             <Input.Group compact style={{ width: item.width ?? '100%', display: 'flex', ...item.style }}>
                 {item.groups.map((subItem, ind) => (
-                    <Form.Item noStyle key={subItem.name}>
-                        <div style={{ flex: 1, minWidth: 0, marginRight: 8 }}><MyBaseForm item={subItem} key={subItem.name} /></div>
+                    <Fragment key={subItem.name}>
+                        <div style={{ flex: 1, minWidth: 0, marginRight: 8 }}><MyBaseForm item={subItem} form={form} /></div>
                         {ind < item.groups.length - 1 && <span style={{ color: '#888', whiteSpace: 'nowrap', marginRight: 8 }}>{item.separator}</span>}
-                    </Form.Item>
+                    </Fragment>
                 ))}
             </Input.Group>
         )
@@ -21,25 +72,15 @@ export const formNode = ({ item }) => {
         disabled: item.readOnly,
         style: { width: item.width ?? '100%' },
         placeholder: item.placeholder ?? `请${['select', 'cascader', 'date'].includes(item.type) ? '选择' : '输入'}`,
-        ...item.props
     }
 
-    const componentDict = {
-        date: <DatePicker {...commonProps} />,
-        number: <InputNumber  {...commonProps} />,
-        default: <Input allowClear {...commonProps} />,
-        ossUpload: <AliyunOSSUpload {...commonProps} />,
-        auto: <AutoComplete options={item.options} {...commonProps} />,
-        radio: <Radio.Group options={item.options} {...commonProps} />,
-        tree: <Tree checkable treeData={item.options} {...commonProps} />,
-        treeSelect: <TreeSelect treeData={item.options} {...commonProps} />,
-        checkbox: <Checkbox.Group options={item.options} {...commonProps} />,
-        textarea: <Input.TextArea autoSize={{ minRows: 4 }} {...commonProps} />,
-        daterange: <DatePicker.RangePicker {...commonProps} placeholder={undefined} />,
-        cascader: <Cascader showSearch allowClear options={item.options} {...commonProps} />,
-        upload: <Upload {...item.uploadProps} {...commonProps}>{item.content ?? '上传文件'}</Upload>,
-        select: <Select allowClear showSearch mode={item.mode} options={item.options} optionFilterProp='label' {...commonProps} />,
-    }
+    const config = componentDict[item.type] ?? componentDict.default
+    const Component = config.Component
+    const specialProps = config.props?.({ item, form }) ?? {}
 
-    return componentDict[item.type] ?? componentDict.default
+    return (
+        <Component {...commonProps} {...specialProps} {...item.props}>
+            {item.type === 'upload' && (item.content ?? '上传文件')}
+        </Component>
+    )
 }

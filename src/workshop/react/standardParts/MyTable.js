@@ -50,7 +50,7 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
                 currentCol = {
                     ...currentCol,
                     filterSearch: true,
-                    onFilter: (value, record) => col.remote ? undefined : col.customFilter({ value, record, dataIndex: col.dataIndex }),
+                    ...(col.remote ? {} : { onFilter: (value, record) => col.customFilter({ value, record, dataIndex: col.dataIndex }) }),
                     filterDropdown: ({ close, confirm, selectedKeys, clearFilters, setSelectedKeys }) => (
                         <Space direction='vertical' style={{ padding: 12 }}>
                             {col.customFilterDropdown({ dataIndex: col.dataIndex, selectedKeys, setSelectedKeys })}
@@ -91,7 +91,7 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
                 }),
             }
         })
-    }, [columns, options, handleSave, editRender, renderAction])
+    }, [rowKey, columns, options, editMode, setSearch, editingKey, editRender, renderAction, handleSave])
 
     const paginationConfig = useMemo(() => {
 
@@ -102,8 +102,8 @@ export const MyTable = ({ size, query, total, search, options, autoScroll, onCha
             showSizeChanger: true,
             showTotal: (total) => `共 ${total} 条`,
             ...(isLocalPaging ? {} : {
-                current: Number(search?.pageNo),
-                pageSize: Number(search?.pageSize),
+                current: Number(search?.pageNo ?? 1),
+                pageSize: Number(search?.pageSize ?? 10),
             }),
             ...(typeof pagination === 'object' ? pagination : {})
         }

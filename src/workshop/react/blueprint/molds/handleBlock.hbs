@@ -71,17 +71,16 @@ const showImg = (record, dataIndex) => {
 
 {{/if}}
 
-let fetching = false
 const modalSubmit = async params => {
+    if (fetchingRef.current) return
     const requestMap={
     {{#each operations}}
         {{this.action}}:()=> {{this.request}},
     {{/each}}
     }
-    if (fetching) return
-    fetching = true
+    fetchingRef.current = true
     const response = await requestMap[modal.type]?.()
-    fetching = false
+    fetchingRef.current = false
     if({{{responseSuccess}}}){
         setModal({ visible: false })
         refresh()

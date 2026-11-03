@@ -20,7 +20,7 @@ export const EditableRow = ({ index, record, columns, draggable, ...props }) => 
             })
             form.setFieldsValue({ ...record, ...extra })
         }
-    }, [record])
+    }, [record, columns, form])
 
     return (
         <Form form={form} component={false} onValuesChange={(changedValue, allValue) => props?.onValuesChange?.({ changedValue, allValue, form })}>
@@ -63,7 +63,7 @@ export const EditableCell = ({ mode, title, record, rowKey, editMode, editable, 
         try {
             const values = await form.validateFields()
             if (mode) {
-                values[dataIndex] = values[dataIndex].join(',')
+                values[dataIndex] = values[dataIndex]?.join(',')
             }
             if (!defaultEdit) {
                 toggleEdit()

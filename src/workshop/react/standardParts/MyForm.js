@@ -30,7 +30,7 @@ const LAYOUT_PROCESSORS = {
 }
 
 const ACTION_PROCESSORS = {
-    addonAfter: (item, { customClick, tableConfig, setModalTable, setSelectedTableRows }) => ({
+    addonAfter: (item, { customClick, tableConfig = {}, setModalTable, setSelectedTableRows }) => ({
         props: {
             addonAfter: (
                 <Button onClick={() => {
@@ -38,8 +38,8 @@ const ACTION_PROCESSORS = {
                         customClick()
                         return
                     }
-                    setSelectedTableRows([])
-                    setModalTable({ visible: true, title: `选择${item.label}`, ...tableConfig[item.name] })
+                    setSelectedTableRows?.([])
+                    setModalTable?.({ visible: true, title: `选择${item.label}`, ...tableConfig[item.name] })
                 }}>
                     {item.addonAfter}
                 </Button>
@@ -113,7 +113,7 @@ export const MyForm = ({ record, formItems = [], externalForm, labelCol, wrapper
                         initialData[key] = dayjs(value)
                     }
                 } else if ((config?.type === 'select' && config.mode) || config?.type === 'checkbox') {
-                    initialData[key] = Array.isArray(value) ? value : value.split(config.separator ?? ',')
+                    initialData[key] = Array.isArray(value) ? value : value?.split(config.separator ?? ',')
                 } else {
                     initialData[key] = value
                 }

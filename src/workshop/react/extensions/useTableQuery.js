@@ -1,6 +1,8 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 
-export const useTableQuery = ({ api, cols = [], initialParams = {}, formatResponse, isLocalPaging = false }) => {
+const getColumnSchema = cols => cols.map(col => `${col.title}-${col.dataIndex}-${col.sortOrder}`).join('|')
+
+export const useTableQuery = ({ api, cols = [], initialParams = {}, formatResponse }) => {
 
     const [total, setTotal] = useState(0)
     const [columns, setColumns] = useState(cols)
@@ -10,7 +12,6 @@ export const useTableQuery = ({ api, cols = [], initialParams = {}, formatRespon
 
     const apiRef = useRef(api)
     const fetchIdRef = useRef(0)
-    const lastFilterRef = useRef('')
     const formatResponseRef = useRef(formatResponse)
 
     useEffect(() => {
@@ -21,19 +22,8 @@ export const useTableQuery = ({ api, cols = [], initialParams = {}, formatRespon
         formatResponseRef.current = formatResponse
     }, [formatResponse])
 
-    const getColumnSchema = cols => cols.map(col => `${col.title}-${col.dataIndex}-${col.sortOrder}`).join('|')
-
     const fetchData = useCallback(async () => {
         if (!apiRef.current) return
-
-        if (isLocalPaging) {
-            const currentFilter = JSON.stringify(Object.fromEntries(Object.entries(search).filter(([k]) => !['pageNo', 'pageSize'].includes(k))))
-            if (lastFilterRef.current === currentFilter && dataSource.length > 0) {
-                return
-            }
-            lastFilterRef.current = currentFilter
-        }
-
         setLoading(true)
         const currentFetchId = ++fetchIdRef.current
         try {
@@ -57,7 +47,7 @@ export const useTableQuery = ({ api, cols = [], initialParams = {}, formatRespon
                 setLoading(false)
             }
         }
-    }, [search, isLocalPaging])
+    }, [search])
 
     useEffect(() => {
         fetchData()

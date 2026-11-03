@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { Row, Col, Form, Button, Space } from 'antd'
 import { SearchOutlined, RedoOutlined } from '@ant-design/icons'
 
-export const MySearchForm = ({ form, extra, search, options, loading, labelCol, setSearch, formItems, showLimit = 7, initialValues = {}, initialParams = {}, customReset, customFinish, renderAction, onValuesChange, syncUrlParams = true, defaultPageSize = 10 }) => {
+export const MySearchForm = ({ form, extra, options, loading, labelCol, setSearch, formItems, showLimit = 7, initialValues = {}, initialParams = {}, customReset, customFinish, renderAction, onValuesChange, syncUrlParams = true, defaultPageSize = 10 }) => {
 
     const [limit, setLimit] = useState(showLimit)
 
@@ -26,7 +26,7 @@ export const MySearchForm = ({ form, extra, search, options, loading, labelCol, 
         if (customReset) {
             customReset()
         } else {
-            setSearch({ pageNo: 1, pageSize: search.pageSize ?? defaultPageSize, ...initialParams })
+            setSearch(prev => ({ pageNo: 1, pageSize: prev.pageSize ?? defaultPageSize, ...initialParams }))
         }
     }
 
@@ -54,7 +54,7 @@ export const MySearchForm = ({ form, extra, search, options, loading, labelCol, 
         if (customFinish) {
             customFinish(formattedValues)
         } else {
-            setSearch({ ...search, ...formattedValues, pageNo: 1 })
+            setSearch(prev => ({ ...prev, ...formattedValues, pageNo: 1 }))
         }
     }
 
