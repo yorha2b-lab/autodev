@@ -83,7 +83,11 @@ module.exports = {
                 const cwdUtilsDir = path.join(process.cwd(), utilsDir)
                 if (!fs.existsSync(cwdUtilsDir)) fs.mkdirSync(cwdUtilsDir, { recursive: true })
                 fs.writeFileSync(path.join(cwdUtilsDir, 'menus.js'), `export const menus = ${contextStringify({ context: logistics.supporter.getExistingMenus(pagesDir), maxLength: 50 })}`)
-                fs.unlinkSync(mission.input)
+                try {
+                    if (fs.existsSync(mission.input)) fs.unlinkSync(mission.input)
+                } catch (e) {
+                    // 忽略文件锁定，静默放行
+                }
             }
 
         } catch (error) {

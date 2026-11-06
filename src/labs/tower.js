@@ -5,12 +5,15 @@ module.exports = ({ yorha, dialog, logistics, headquarters }) => {
     const httpProxy = require('http-proxy')
 
     const { pod153, commander } = yorha
+    const { getConfig, killZombiePort } = logistics.supporter
     const { unwrapSignal, isQuerySignal } = logistics.analyzer
-    const { routeMap = {}, proxyTarget } = logistics.supporter.getConfig()
+    const { routeMap = {}, proxyTarget } = getConfig()
 
     const TOWER_PORT = 42153
     const hackedRegistry = new Map()
     const proxy = httpProxy.createProxyServer({})
+
+    const resurrectingSet = new Set()
 
     const getJsonFingerprint = obj => {
         if (!obj || typeof obj !== 'object') return ''
@@ -54,11 +57,37 @@ module.exports = ({ yorha, dialog, logistics, headquarters }) => {
         })
     })
 
-    const server = http.createServer((req, res) => {
+    const server = http.createServer(async (req, res) => {
         if (!proxyTarget) {
             return
         }
+        if (req.url.includes('BUNKER_API_ANCHOR')) {
+            const referer = req.headers.referer || 'http://localhost'
+            const urlPath = new URL(referer, 'http://localhost').pathname
+            const moduleName = routeMap?.[urlPath] ?? urlPath.split('/').filter(Boolean).at(-1)
+
+            if (moduleName && !resurrectingSet.has(moduleName)) {
+                resurrectingSet.add(moduleName)
+                try {
+                    const { labs } = require('../awakening').get()
+                    const council = await labs?.council
+                    await council?.resurrection?.(moduleName)
+                } finally {
+                    resurrectingSet.delete(moduleName)
+                }
+            }
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.end('{}')
+            return
+        }
         proxy.web(req, res, { target: proxyTarget, changeOrigin: true })
+    })
+
+    server.on('error', err => {
+        if (err.code === 'EADDRINUSE') {
+            killZombiePort(TOWER_PORT)
+            setTimeout(() => server.listen(TOWER_PORT), 100)
+        }
     })
 
     server.listen(TOWER_PORT, () => {

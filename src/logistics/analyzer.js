@@ -2,6 +2,7 @@ const { Segment, useDefault } = require('segmentit')
 const segmentit = useDefault(new Segment())
 
 const dataKeys = ['data', 'list', 'items', 'datas', 'rows', 'result', 'payload', 'results', 'dataList']
+const ACTION_WORDS = ['删除', '作废', '审核', '审批', '导出', '编辑', '修改', '新增', '创建', '查看', '详情', '启用', '禁用', '下载', '驳回', '作废']
 
 const unwrapSignal = json => {
     if (!json || typeof json !== 'object') return null
@@ -71,11 +72,24 @@ const getLocalScore = (api, pageKeywords, moduleName) => {
     let score = 0
     const path = api.path.toLowerCase()
     const desc = api.desc.toLowerCase()
-    const mod = moduleName.toLowerCase()
-    if (normalize(path).includes(normalize(mod))) score += 50
+    const tags = (api.tags || []).join(' ').toLowerCase()
+    const mod = normalize(moduleName)
+
+    if (normalize(path).includes(mod)) score += 50
+    if (normalize(tags).includes(mod)) score += 50
+
     pageKeywords.forEach(word => {
-        if (desc.includes(word.toLowerCase())) score += 10
-        if (path.includes(word.toLowerCase())) score += 5
+        const w = word.toLowerCase()
+        const isAction = ACTION_WORDS.includes(w)
+        if (tags.includes(w)) {
+            score += 30
+        }
+        if (desc.includes(w)) {
+            score += isAction ? 35 : 10
+        }
+        if (path.includes(w)) {
+            score += 5
+        }
     })
     return score
 }

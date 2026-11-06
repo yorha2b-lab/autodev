@@ -2,13 +2,6 @@
 const initialParams = {{initParams}}
 const query = formatQuery(Object.fromEntries(new URLSearchParams(location.search).entries()),  {{formItems}})
 
-/**
- * 💡 [BUNKER 战术锚点提示]
- * 代码中带有 BUNKER_API_ANCHOR_ 前缀的为待通电接口。
- * 1. 自动模式：配置 config.js 中的 apiDoc 后，系统将自动扫描 Swagger 并对齐真实路径；
- * 2. 手动模式：搜索 BUNKER_API_ANCHOR 手动替换为真实接口。
-*/
-
 const { total, search, columns, loading, dataSource, setLoading, setSearch, setDataSource, refresh } = useTableQuery({
         cols:tableColumns,
         initialParams: { ...initialParams, ...query },
@@ -17,7 +10,6 @@ const { total, search, columns, loading, dataSource, setLoading, setSearch, setD
             return {
                 data: response?.data?.datas ?? [],
                 total: response?.data?.total ?? 0,
-                columns: undefined,//可选,解析接口动态列;优先级高于cols
             }
         },
     })

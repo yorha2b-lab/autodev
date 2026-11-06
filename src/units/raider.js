@@ -68,8 +68,10 @@ module.exports = {
             pod042.success(spinner, dialog.pod042.partialConstruction((endTime - startTime) / 1000))
             pod042.success(spinner, dialog.pod042.partialRecommendation)
 
-            if (fs.existsSync(mission.input)) {
-                fs.unlinkSync(mission.input)
+            try {
+                if (fs.existsSync(mission.input)) fs.unlinkSync(mission.input)
+            } catch (e) {
+                // 忽略文件锁定，静默放行
             }
 
         } catch (error) {

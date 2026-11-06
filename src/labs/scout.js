@@ -1,12 +1,13 @@
 let globalBrowser = null
 
-module.exports = ({ yorha, dialog }) => {
+module.exports = ({ yorha, dialog, logistics }) => {
 
     const fs = require('fs')
     const path = require('path')
     const http = require('http')
 
     const { pod042 } = yorha
+    const { killZombiePort } = logistics.supporter
     const relayServerPort = 15342
 
     const isHttpURL = str => {
@@ -72,7 +73,16 @@ module.exports = ({ yorha, dialog }) => {
                 res.end('Not Found')
             }
         })
-        return new Promise(resolve => server.listen(relayServerPort, () => resolve({ server })))
+        return new Promise(resolve => {
+            const tryListen = () => server.listen(relayServerPort, () => resolve({ server }))
+            server.once('error', err => {
+                if (err.code === 'EADDRINUSE') {
+                    killZombiePort(relayServerPort)
+                    setTimeout(tryListen, 150)
+                }
+            })
+            tryListen()
+        })
     }
 
     return {

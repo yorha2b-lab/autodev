@@ -4,6 +4,25 @@ import { useMemo, useState, useEffect } from 'react'
 import { Row, Col, Form, Button, Space } from 'antd'
 import { SearchOutlined, RedoOutlined } from '@ant-design/icons'
 
+export const finishChange = ({ formItems, formattedValues }) => {
+    const result = { ...formattedValues }
+    Object.keys(result).forEach(key => {
+        const val = result[key]
+        const isDateType = formItems.find(item => item.name === key)?.type?.includes('date')
+        if (isDateType && val) {
+            if (Array.isArray(val) && val.length > 0) {
+                const [startKey, endKey] = key.split(',')
+                result[startKey] = val[0].startOf('day').valueOf()
+                result[endKey] = val[1].endOf('day').valueOf()
+                delete result[key]
+            } else {
+                result[key] = val.valueOf()
+            }
+        }
+    })
+    return result
+}
+
 export const MySearchForm = ({ form, extra, options, loading, labelCol, setSearch, formItems, showLimit = 7, initialValues = {}, initialParams = {}, customReset, customFinish, renderAction, onValuesChange, syncUrlParams = true, defaultPageSize = 10 }) => {
 
     const [limit, setLimit] = useState(showLimit)
@@ -31,21 +50,8 @@ export const MySearchForm = ({ form, extra, options, loading, labelCol, setSearc
     }
 
     const handleFinish = values => {
-        const formattedValues = { ...values }
-        Object.keys(formattedValues).forEach(key => {
-            const val = formattedValues[key]
-            const isDateType = formItems.find(item => item.name === key)?.type?.includes('date')
-            if (isDateType && val) {
-                if (Array.isArray(val) && val.length > 0) {
-                    const [startKey, endKey] = key.split(',')
-                    formattedValues[startKey] = val[0].startOf('day').valueOf()
-                    formattedValues[endKey] = val[1].endOf('day').valueOf()
-                    delete formattedValues[key]
-                } else {
-                    formattedValues[key] = val.valueOf()
-                }
-            }
-        })
+        let formattedValues = { ...values }
+        formattedValues = finishChange({ formItems, formattedValues })
         if (syncUrlParams) {
             const currentQuery = Object.fromEntries(new URLSearchParams(window.location.search).entries())
             const params = new URLSearchParams(Object.fromEntries(Object.entries({ ...currentQuery, ...formattedValues }).filter(([key, value]) => !['', null, undefined].includes(value))))
