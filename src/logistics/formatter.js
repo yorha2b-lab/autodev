@@ -18,6 +18,7 @@ const cleanCode = str => str
 const contextStringify = ({ context, indent = 4, maxLength = 200 }) => stringify.default(context, { indent, maxLength })
 
 const dehydrateCode = code => code
+    .replace(/\r\n/g, '\n')
     // 1. 物理砍掉所有的 import 依赖声明 (省 20-30 行废话)
     .replace(/^import\s+.*?;\s*$/gm, '')
     .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?\s*$/gm, '')
@@ -25,8 +26,8 @@ const dehydrateCode = code => code
     .replace(/style=\{\{[\s\S]*?\}\}/g, '')
     // 3. 物理砍掉所有 className 和无关的 UI 属性
     .replace(/className=['"][^'"]*['"]/g, '')
-    // 4. 物理砍掉常见的纯排版外壳标签 (<Row>, <Col>, <Card>, <Space>)，只留内容
-    .replace(/<\/?(Row|Col|Card|Space|Fragment)[^>]*>/g, '')
+    // 4. 物理砍掉常见的纯排版外壳标签 (<Row>, <Col>)，只留内容
+    .replace(/<\/?(Row|Col|Space|Fragment)[^>]*>/g, '')
     // 5. 压缩多余连续空格和空行
     .replace(/[ \t]+$/gm, '')
     .replace(/\n{2,}/g, '\n')

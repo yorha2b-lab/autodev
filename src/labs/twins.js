@@ -16,21 +16,22 @@ module.exports = ({ llm, yorha, dialog, logistics }) => {
         let files = []
         const list = fs.readdirSync(dir, { withFileTypes: true })
         for (const item of list) {
+            if (item.name.startsWith('.')) continue
             const fullPath = path.join(dir, item.name)
             if (item.isDirectory()) {
-                if (!['node_modules', '.git', '__tests__'].includes(item.name)) {
+                if (!['node_modules', '__tests__', 'mock', 'mocks'].includes(item.name)) {
                     files = files.concat(readModuleFiles(fullPath, rootDir))
                 }
-            } else if (/\.(jsx?|tsx?|json)$/i.test(item.name)) {
+            } else if (/\.(jsx?|tsx?)$/i.test(item.name) && !/\.(test|spec|stories)\.[^.]+$/i.test(item.name)) {
                 files.push({
-                    name: item.name,
                     fullPath,
+                    name: item.name,
+                    content: fs.readFileSync(fullPath, 'utf-8'),
                     relativeName: path.relative(rootDir, fullPath).replace(/\\/g, '/'),
-                    content: fs.readFileSync(fullPath, 'utf-8')
                 })
             }
         }
-        return files
+        return files.sort((a, b) => a.relativeName.localeCompare(b.relativeName))
     }
 
     return {
@@ -102,8 +103,8 @@ module.exports = ({ llm, yorha, dialog, logistics }) => {
                             const num = String(idx + 1).padStart(2, '0')
                             console.log(chalk.red(`│  `) + chalk.bold.bgRed.white(` GAP #${num} `) + `  ` + chalk.bold.white(gap.feature))
                             if (gap.detail) {
-                                console.log(chalk.red(`│`) + chalk.gray(`     ├─ `) + chalk.yellow(`🔍: `) + chalk.white(gap.feature))
-                                console.log(chalk.red(`│`) + chalk.gray(`     └─ `) + chalk.red(`⚠️: `) + chalk.yellow(gap.detail))
+                                console.log(chalk.red(`│`) + chalk.gray(`     ├─ `) + chalk.yellow(`🔍 `) + chalk.white(gap.feature))
+                                console.log(chalk.red(`│`) + chalk.gray(`     └─ `) + chalk.red(`⚠️ `) + chalk.yellow(gap.detail))
                             }
                             console.log(chalk.red(`│ `))
                         })
