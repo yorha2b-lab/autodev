@@ -141,11 +141,17 @@ module.exports = ({ llm, yorha, dialog, logistics }) => {
                         </div>
                     `
                     document.body.appendChild(overlay)
+                    const lastModule = window.__lastModuleName || ''
                     const input = overlay.querySelector('#bunker-input')
-                    setTimeout(() => input.focus(), 50)
+                    input.value = lastModule
+                    setTimeout(() => {
+                        input.focus()
+                        input.select()
+                    }, 50)
                     input.addEventListener('keydown', e => {
                         if (e.key === 'Enter' && input.value.trim()) {
                             const val = input.value.trim()
+                            window.__lastModuleName = val
                             overlay.remove()
                             resolve(val)
                         }
