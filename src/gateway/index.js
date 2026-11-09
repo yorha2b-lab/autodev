@@ -5,41 +5,40 @@ module.exports = ({ yorha, dialog, logistics, constitution }) => {
     const { sleep } = logistics.presenter
     const { FRONTEND_ENGINEER } = constitution.system
     const { textModel, visionModel } = logistics.supporter.getConfig()
-    const { council, inspector, similarity, reconciler, simulation } = constitution
 
     const openAI = require('./client')()
     const askAI = require('./protocol')({ yorha, sleep, dialog, openAI })
 
     return {
         askAI,
-        generateMock: async ({ columns, fileName }) => {
+        simulation: async ({ columns, fileName }) => {
             return askAI({
                 model: textModel,
                 messages: [
                     { role: 'system', content: FRONTEND_ENGINEER },
-                    { role: 'user', content: simulation({ columns, fileName }) }
+                    { role: 'user', content: constitution.simulation({ columns, fileName }) }
                 ]
             })
         },
-        nameSimilarity: async ({ fileName, english }) => {
+        similarity: async ({ fileName, english }) => {
             return askAI({
                 model: textModel,
                 messages: [
                     { role: 'system', content: FRONTEND_ENGINEER },
-                    { role: 'user', content: similarity({ fileName, english }) }
+                    { role: 'user', content: constitution.similarity({ fileName, english }) }
                 ]
             })
         },
-        apiParser: async ({ bunkerAnchors, realApis }) => {
+        council: async ({ bunkerAnchors, realApis }) => {
             return askAI({
                 model: textModel,
                 messages: [
                     { role: 'system', content: FRONTEND_ENGINEER },
-                    { role: 'user', content: council({ bunkerAnchors, realApis }) }
+                    { role: 'user', content: constitution.council({ bunkerAnchors, realApis }) }
                 ]
             })
         },
-        recognizePage: async ({ schema, prompt, filePath }) => {
+        replicate: async ({ schema, prompt, filePath }) => {
             const compressedBuffer = await sharp(filePath)
                 .resize(1280, null, { withoutEnlargement: true })
                 .jpeg({ quality: 80 })
@@ -61,21 +60,21 @@ module.exports = ({ yorha, dialog, logistics, constitution }) => {
                 response_format: schema ? { strict: true, type: 'json_schema', json_schema: schema } : { type: 'json_object' }
             })
         },
-        alignResponseFields: async ({ responseStr, resourceStr }) => {
+        reconciler: async ({ responseStr, resourceStr }) => {
             return askAI({
                 model: textModel,
                 messages: [
                     { role: 'system', content: FRONTEND_ENGINEER },
-                    { role: 'user', content: reconciler({ responseStr, resourceStr }) }
+                    { role: 'user', content: constitution.reconciler({ responseStr, resourceStr }) }
                 ]
             })
         },
-        prdInspector: async ({ prdText, moduleName, moduleCodeView }) => {
+        maintain: async ({ prdText, moduleName, moduleCodeView }) => {
             return askAI({
                 model: textModel,
                 messages: [
                     { role: 'system', content: FRONTEND_ENGINEER },
-                    { role: 'user', content: inspector({ prdText, moduleName, moduleCodeView }) }
+                    { role: 'user', content: constitution.maintain({ prdText, moduleName, moduleCodeView }) }
                 ]
             })
         },

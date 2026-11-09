@@ -6,8 +6,8 @@ module.exports = async ({ data, fileName }) => {
 
     const { llm, labs, yorha, dialog, logistics } = require('../awakening').get()
 
+    const { reconciler } = llm
     const { nineS, pod153 } = yorha
-    const { alignResponseFields } = llm
     const { cleanCode } = logistics.formatter
     const { pagesDir } = logistics.supporter.getConfig()
 
@@ -37,7 +37,7 @@ module.exports = async ({ data, fileName }) => {
             return Array.from(new Set(keys.filter(key => key !== 'index')))
         }
 
-        const result = await alignResponseFields({ responseStr: JSON.stringify(data), resourceStr: extractKeys(resourceStr).join(',') })
+        const result = await reconciler({ responseStr: JSON.stringify(data), resourceStr: extractKeys(resourceStr).join(',') })
         let changeCount = 0
         const resultMapping = {}
         Object.entries(result).forEach(([oldField, newField]) => {

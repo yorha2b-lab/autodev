@@ -4,7 +4,7 @@ module.exports = async ({ llm, yorha, dialog, logistics }) => {
     const path = require('path')
     const JSON5 = require('json5')
 
-    const { apiParser } = llm
+    const { council } = llm
     const { pod153, commander } = yorha
     const { contextStringify } = logistics.formatter
     const { apiDoc, pagesDir } = logistics.supporter.getConfig()
@@ -104,7 +104,7 @@ module.exports = async ({ llm, yorha, dialog, logistics }) => {
 
                 const finalCandidates = candidates.map(item => `${item.method} ${item.path} ${item.desc}`).join('\n')
                 const spinner = pod153.start(dialog.pod153.inactiveModule(moduleName), 'yellow')
-                const result = await apiParser({ bunkerAnchors, realApis: finalCandidates })
+                const result = await council({ bunkerAnchors, realApis: finalCandidates })
 
                 if (result) {
                     for (const [filePath, rawCode] of Object.entries(fileContents)) {

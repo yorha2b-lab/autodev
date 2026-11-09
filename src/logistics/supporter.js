@@ -2,6 +2,15 @@ const fs = require('fs')
 const path = require('path')
 const { execSync } = require('child_process')
 
+const isHttpURL = str => {
+    try {
+        const url = new URL(str)
+        return ['http:', 'https:'].includes(url.protocol)
+    } catch {
+        return false
+    }
+}
+
 const getConfig = () => {
     const localConfigPath = path.join(process.cwd(), 'bunker', 'config.js') // 项目配置
     const defaultConfigPath = path.resolve(__dirname, '../../config.js') // 默认配置
@@ -38,6 +47,7 @@ const killZombiePort = port => {
 }
 
 module.exports = {
+    isHttpURL,
     getConfig,
     killZombiePort,
     getExistingMenus,

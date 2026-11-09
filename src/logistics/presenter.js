@@ -34,6 +34,8 @@ const yorha = () => {
         pod042: createMember({ name: '[YoRHa::Pod042]' }),
         pod153: createMember({ name: '[YoRHa::Pod153]' }),
         operator6O: createMember({ name: '[YoRHa::6O]' }),
+        devola: createMember({ name: '[YoRHa::Devola]' }),
+        popola: createMember({ name: '[YoRHa::Popola]' }),
     }
 
 }

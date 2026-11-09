@@ -29,7 +29,7 @@ module.exports = {
         const { nineS, pod042 } = yorha
         const { index, resource } = builder
         const { contextStringify } = logistics.formatter
-        const { generateMock, recognizePage, nameSimilarity } = llm
+        const { simulation, replicate, similarity } = llm
         const { useDemo, pagesDir, utilsDir, needMock } = logistics.supporter.getConfig()
 
 
@@ -51,10 +51,10 @@ module.exports = {
                 pageConfig = require('../../example/example.json')
             } else {
                 pod042.update(spinner, dialog.pod042.uploadVisualMetadata)
-                pageConfig = await recognizePage({ prompt: striker, filePath: mission.input, schema: require(`../workshop/${template}/protocols/striker.json`) })
-                const { similarity } = await nameSimilarity({ fileName, english: pageConfig.title?.english })
+                pageConfig = await replicate({ prompt: striker, filePath: mission.input, schema: require(`../workshop/${template}/protocols/striker.json`) })
+                const { rate } = await similarity({ fileName, english: pageConfig.title?.english })
                 const isGarbageName = /^(image|img|screen|capture|pic|temp|test|新建|未命名|[\d_-]+$)/i.test(fileName)
-                if (similarity < 0.3 || isGarbageName) {
+                if (rate < 0.3 || isGarbageName) {
                     fileName = pageConfig.title?.english
                     targetDir = path.join(process.cwd(), pagesDir, pageConfig.title?.english)
                     if (fs.existsSync(targetDir)) {
@@ -71,7 +71,7 @@ module.exports = {
                 nineS.update(spinner, dialog.nineS.dataCamouflage(fileName))
                 const mockDir = path.join(process.cwd(), 'mock')
                 if (!fs.existsSync(mockDir)) fs.mkdirSync(mockDir, { recursive: true })
-                const rawContent = await generateMock({ columns: pageConfig.table.columns, fileName })
+                const rawContent = await simulation({ columns: pageConfig.table.columns, fileName })
                 fs.writeFileSync(path.join(mockDir, `${fileName}.js`), `export default ${contextStringify({ context: rawContent })}`)
                 nineS.success(spinner, dialog.nineS.dataCamouflageComplete)
             }

@@ -26,7 +26,7 @@ module.exports = bunker => {
                         unit = units.find(unit => unit.meta.name === 'striker')
                     } else {
                         spinner = acp.yorha.commander.start(acp.dialog.bunker.detectedEnemy)
-                        const result = await acp.llm.recognizePage({ filePath: mission.input, prompt: acp.constitution.commander(units) })
+                        const result = await acp.llm.replicate({ filePath: mission.input, prompt: acp.constitution.commander(units) })
                         acp.yorha.commander.success(spinner, acp.dialog.bunker.confirmEnemy)
                         unit = units.map(unit => ({ unit, score: unit.meta.capabilities.filter(cap => result.capabilities.includes(cap)).length }))
                             .filter(item => item.score > 0)

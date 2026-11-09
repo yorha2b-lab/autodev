@@ -7,17 +7,8 @@ module.exports = ({ yorha, dialog, logistics }) => {
     const http = require('http')
 
     const { pod042 } = yorha
-    const { killZombiePort } = logistics.supporter
     const relayServerPort = 15342
-
-    const isHttpURL = str => {
-        try {
-            const url = new URL(str)
-            return ['http:', 'https:'].includes(url.protocol)
-        } catch {
-            return false
-        }
-    }
+    const { isHttpURL, killZombiePort } = logistics.supporter
 
     const derivePageNameFromUrl = rawUrl => {
         const parsed = new URL(rawUrl)
@@ -92,7 +83,7 @@ module.exports = ({ yorha, dialog, logistics }) => {
 
             if (isHttpURL(targetUrl)) {
                 pod042.report(dialog.pod042.startScout, 'green')
-                const sessionDir = path.join(process.cwd(), 'bunker', '.chrome_session')
+                const sessionDir = path.join(process.cwd(), 'bunker', '.scout_session')
                 let isBrowserAlive = false
                 if (globalBrowser) {
                     try {

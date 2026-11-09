@@ -12,12 +12,12 @@ module.exports = accessPoint => {
         labs.council = require('../labs/council')(accessPoint)
     }
 
-    if (remains) {
-        labs.scout = require('../labs/scout')(accessPoint).archeology(remains)
+    if (prdDoc) {
+        labs.twins = require('../labs/twins')(accessPoint).maintain(prdDoc)
     }
 
-    if (prdDoc) {
-        labs.inspector = require('../labs/inspector')(accessPoint).audit(prdDoc)
+    if (remains) {
+        labs.scout = require('../labs/scout')(accessPoint).archeology(remains)
     }
 
     return labs
