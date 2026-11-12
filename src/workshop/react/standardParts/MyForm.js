@@ -71,7 +71,7 @@ const FormRenderer = ({ form, options, formItems }) => {
         const processedItem = {
             ...item,
             ...(item.renderAction && renderAction?.[item.name] ? { render: renderAction[item.name] } : {}),
-            ...(['select', 'radio', 'checkbox'].includes(item.type) && !item.options ? { options: options?.[item.name] || [] } : {})
+            ...(['tree', 'radio', 'select', 'checkbox', 'treeSelect'].includes(item.type) && !item.options ? { options: options?.[item.name] || [] } : {})
         }
 
         if (processedItem.layoutType && LAYOUT_PROCESSORS[processedItem.layoutType]) {

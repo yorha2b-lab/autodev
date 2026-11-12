@@ -3,9 +3,12 @@ import { MyBaseForm } from './MyBaseForm'
 import { AliyunOSSUpload } from './AliyunOSSUpload'
 import { Tree, Radio, Input, Upload, Select, Cascader, Checkbox, DatePicker, InputNumber, TreeSelect, AutoComplete } from 'antd'
 
+const FormTree = ({ value, onChange, ...rest }) => (<Tree checkedKeys={value} onCheck={keys => onChange?.(Array.isArray(keys) ? keys : keys.checked)} {...rest} />)
+
 const componentDict = {
     date: { Component: DatePicker },
     number: { Component: InputNumber },
+    password: { Component: Input.Password },
     ossUpload: { Component: AliyunOSSUpload },
     default: {
         Component: Input,
@@ -40,7 +43,7 @@ const componentDict = {
         props: ({ item }) => ({ treeData: item.options })
     },
     tree: {
-        Component: Tree,
+        Component: FormTree,
         props: ({ item }) => ({ checkable: true, treeData: item.options })
     },
     cascader: {
@@ -78,9 +81,13 @@ export const formNode = ({ item, form }) => {
     const Component = config.Component
     const specialProps = config.props?.({ item, form }) ?? {}
 
-    return (
-        <Component {...commonProps} {...specialProps} {...item.props}>
-            {item.type === 'upload' && (item.content ?? '上传文件')}
-        </Component>
-    )
+    if (item.type === 'upload') {
+        return (
+            <Component {...commonProps} {...specialProps} {...item.props}>
+                {item.content ?? '上传文件'}
+            </Component>
+        )
+    }
+
+    return <Component {...commonProps} {...specialProps} {...item.props} />
 }
