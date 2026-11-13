@@ -35,7 +35,7 @@ module.exports = async ({ llm, yorha, dialog, logistics }) => {
         const matchedPath = Object.keys(apiData.paths || {}).find(p => cleanUrl.endsWith(p) || p.endsWith(cleanUrl))
         if (!matchedPath) return null
         const definitions = apiData.definitions || apiData.components?.schemas || {}
-        const methodObj = apiData.paths?.[apiUrl]?.[method.toLowerCase()]
+        const methodObj = apiData.paths?.[matchedPath]?.[method.toLowerCase()]
         const rootSchema = methodObj?.responses?.['200']?.schema || methodObj?.responses?.['200']?.content?.['application/json']?.schema
         if (!rootSchema) return null
 
