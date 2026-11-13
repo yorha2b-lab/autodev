@@ -25,6 +25,7 @@ module.exports = async ({ llm, yorha, dialog, logistics }) => {
             .filter(([method]) => validMethods.includes(method.toLowerCase()))
             .map(([method, info]) => ({
                 path: apiUrl,
+                tags: info.tags,
                 method: method?.toUpperCase() || '',
                 desc: info.summary || info.description || 'N/A',
             }))
