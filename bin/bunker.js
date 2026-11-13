@@ -76,9 +76,9 @@ program
             currentBunker.yorha.commander.report(dialog.bunker.systemOffline, 'gray')
             terminalCollapse(500, dialog, currentBunker)
             const scout = await currentBunker.labs?.scout
-            const inspector = await currentBunker.labs?.inspector
+            const twins = await currentBunker.labs?.twins
             scout?.close()
-            inspector?.close()
+            twins?.close()
         })
     })
 
