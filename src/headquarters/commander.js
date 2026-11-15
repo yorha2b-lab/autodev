@@ -36,7 +36,7 @@ module.exports = bunker => {
                         acp.yorha.commander.fail(spinner, acp.dialog.bunker.missionFailed)
                         return
                     }
-                    await unit.execute({ acp, mission })
+                    await unit.execute(mission)
                 } catch (error) {
                     acp.yorha.commander.fail(spinner, acp.dialog.bunker.missionUnknown)
                 }

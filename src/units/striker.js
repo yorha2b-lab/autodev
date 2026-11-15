@@ -18,12 +18,12 @@ module.exports = {
             - 可能包含统计区域、导出按钮等页面级功能
         `
     },
-    execute: async ({ acp, mission }) => {
+    execute: async ({ input }) => {
 
         const fs = require('fs')
         const path = require('path')
 
-        const { llm, yorha, dialog, builder, template, logistics, briefings } = acp
+        const { llm, yorha, dialog, builder, template, logistics, briefings } = require('../awakening').get()
 
         const { striker } = briefings
         const { nineS, pod042 } = yorha
@@ -34,7 +34,7 @@ module.exports = {
 
 
         const startTime = Date.now()
-        let fileName = path.basename(mission.input, path.extname(mission.input))
+        let fileName = path.basename(input, path.extname(input))
         let targetDir = path.join(process.cwd(), pagesDir, fileName)
 
         const spinner = pod042.start(dialog.pod042.visualCaptured(fileName))
@@ -51,7 +51,7 @@ module.exports = {
                 pageConfig = require('../../example/example.json')
             } else {
                 pod042.update(spinner, dialog.pod042.uploadVisualMetadata)
-                pageConfig = await replicate({ prompt: striker, filePath: mission.input, schema: require(`../workshop/${template}/protocols/striker.json`) })
+                pageConfig = await replicate({ prompt: striker, filePath: input, schema: require(`../workshop/${template}/protocols/striker.json`) })
                 const { rate } = await similarity({ fileName, english: pageConfig.title?.english })
                 const isGarbageName = /^(image|img|screen|capture|pic|temp|test|新建|未命名|[\d_-]+$)/i.test(fileName)
                 if (rate < 0.3 || isGarbageName) {
@@ -79,12 +79,12 @@ module.exports = {
             const endTime = Date.now()
             pod042.success(spinner, dialog.pod042.assemblyComplete(fileName, (endTime - startTime) / 1000))
 
-            if (fs.existsSync(mission.input)) {
+            if (fs.existsSync(input)) {
                 const cwdUtilsDir = path.join(process.cwd(), utilsDir)
                 if (!fs.existsSync(cwdUtilsDir)) fs.mkdirSync(cwdUtilsDir, { recursive: true })
                 fs.writeFileSync(path.join(cwdUtilsDir, 'menus.js'), `export const menus = ${contextStringify({ context: logistics.supporter.getExistingMenus(pagesDir), maxLength: 50 })}`)
                 try {
-                    if (fs.existsSync(mission.input)) fs.unlinkSync(mission.input)
+                    if (fs.existsSync(input)) fs.unlinkSync(input)
                 } catch (e) {
                     // 忽略文件锁定，静默放行
                 }

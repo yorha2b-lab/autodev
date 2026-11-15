@@ -16,11 +16,11 @@ module.exports = {
             - 页面结构明显不完整
         `
     },
-    execute: async ({ acp, mission }) => {
+    execute: async ({ input }) => {
 
         const fs = require('fs')
         const chalk = require('chalk')
-        const { llm, yorha, dialog, builder, logistics, briefings } = acp
+        const { llm, yorha, dialog, builder, logistics, briefings } = require('../awakening').get()
 
         const { pod042 } = yorha
         const { replicate } = llm
@@ -35,7 +35,7 @@ module.exports = {
         try {
             pod042.update(spinner, dialog.pod042.extractingUiMetadata)
 
-            const pageConfig = await replicate({ prompt: raider, filePath: mission.input })
+            const pageConfig = await replicate({ prompt: raider, filePath: input })
 
             let { tabs = [] } = pageConfig
             tabs = tabs.map(tab => ({ ...tab, children: `<${tab.key.at(0).toUpperCase()}${tab.key.slice(1)}/>` }))
@@ -61,7 +61,7 @@ module.exports = {
             const endTime = Date.now()
             spinner.stop()
             console.log(chalk.magenta(`\n┌────────────────── [ YoRHa Construction Output ] ─────────────────┐`))
-            console.log(chalk.magenta(`│ Source: ${mission.input}`))
+            console.log(chalk.magenta(`│ Source: ${input}`))
             console.log(chalk.magenta(`│ Protocol: Partial UI Fragment | Status: SUCCESS`))
             console.log(chalk.magenta(`├──────────────────────────────────────────────────────────────────┘`))
             console.log(chalk.white(finalResult))
@@ -69,7 +69,7 @@ module.exports = {
             pod042.success(spinner, dialog.pod042.partialRecommendation)
 
             try {
-                if (fs.existsSync(mission.input)) fs.unlinkSync(mission.input)
+                if (fs.existsSync(input)) fs.unlinkSync(input)
             } catch (e) {
                 // 忽略文件锁定，静默放行
             }
