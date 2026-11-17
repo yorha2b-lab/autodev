@@ -42,10 +42,6 @@ module.exports = ({ llm, yorha, dialog, logistics }) => {
             const puppeteer = require('puppeteer')
             devola.report(dialog.devola.start, 'magenta')
 
-            ['SingletonLock', 'SingletonSocket', 'SingletonCookie'].forEach(file => {
-                try { fs.unlinkSync(path.join(sessionDir, file)) } catch (e) { }
-            })
-
             const browser = await puppeteer.launch({
                 headless: false,
                 handleSIGINT: false,
