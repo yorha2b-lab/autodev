@@ -1,4 +1,4 @@
-let globalBrowser = null
+let scoutBrowser = null
 
 module.exports = ({ yorha, dialog, logistics }) => {
 
@@ -85,12 +85,12 @@ module.exports = ({ yorha, dialog, logistics }) => {
                 pod042.report(dialog.pod042.startScout, 'green')
                 const sessionDir = path.join(process.cwd(), 'bunker', '.scout_session')
                 let isBrowserAlive = false
-                if (globalBrowser) {
+                if (scoutBrowser) {
                     try {
-                        await globalBrowser.pages()
+                        await scoutBrowser.pages()
                         isBrowserAlive = true
                     } catch (e) {
-                        globalBrowser = null
+                        scoutBrowser = null
                     }
                 }
 
@@ -100,7 +100,7 @@ module.exports = ({ yorha, dialog, logistics }) => {
                         try { fs.unlinkSync(path.join(sessionDir, file)) } catch (e) { }
                     })
 
-                    globalBrowser = await puppeteer.launch({
+                    scoutBrowser = await puppeteer.launch({
                         headless: false,
                         handleSIGINT: false,
                         defaultViewport: null,
@@ -109,8 +109,8 @@ module.exports = ({ yorha, dialog, logistics }) => {
                     })
                 }
 
-                const pages = await globalBrowser.pages()
-                const page = pages.length > 0 ? pages[0] : await globalBrowser.newPage()
+                const pages = await scoutBrowser.pages()
+                const page = pages.length > 0 ? pages[0] : await scoutBrowser.newPage()
 
                 try {
                     const browserDialog = { capturedToast: dialog.pod042.capturedToast }
@@ -151,7 +151,7 @@ module.exports = ({ yorha, dialog, logistics }) => {
 
                 await page.goto(targetUrl)
                 pod042.report(dialog.pod042.scoutReady, 'green')
-                return globalBrowser
+                return scoutBrowser
             }
 
             const localDir = path.resolve(targetUrl)

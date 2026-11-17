@@ -1,8 +1,10 @@
-const fs = require('fs')
-const path = require('path')
-const chalk = require('chalk')
+let twinsBrowser = null
 
 module.exports = ({ llm, yorha, dialog, logistics }) => {
+
+    const fs = require('fs')
+    const path = require('path')
+    const chalk = require('chalk')
 
     const { maintain } = llm
     const { devola } = yorha
@@ -42,16 +44,32 @@ module.exports = ({ llm, yorha, dialog, logistics }) => {
             const puppeteer = require('puppeteer')
             devola.report(dialog.devola.start, 'magenta')
 
-            const browser = await puppeteer.launch({
-                headless: false,
-                handleSIGINT: false,
-                defaultViewport: null,
-                userDataDir: sessionDir,
-                args: ['--start-maximized']
-            })
+            let isBrowserAlive = false
+            if (twinsBrowser) {
+                try {
+                    await twinsBrowser.pages()
+                    isBrowserAlive = true
+                } catch (e) {
+                    twinsBrowser = null
+                }
+            }
 
-            const pages = await browser.pages()
-            const page = pages.length > 0 ? pages[0] : await browser.newPage()
+            if (!isBrowserAlive) {
+                ['SingletonLock', 'SingletonSocket', 'SingletonCookie'].forEach(file => {
+                    try { fs.unlinkSync(path.join(sessionDir, file)) } catch (e) { }
+                })
+
+                twinsBrowser = await puppeteer.launch({
+                    headless: false,
+                    handleSIGINT: false,
+                    defaultViewport: null,
+                    userDataDir: sessionDir,
+                    args: ['--start-maximized']
+                })
+            }
+
+            const pages = await twinsBrowser.pages()
+            const page = pages.length > 0 ? pages[0] : await twinsBrowser.newPage()
 
             await page.exposeFunction('nodeMaintainRequirement', async ({ prdText, moduleName }) => {
                 if (!prdText || !moduleName) return
@@ -186,7 +204,7 @@ module.exports = ({ llm, yorha, dialog, logistics }) => {
 
             if (prdDoc) await page.goto(prdDoc)
             devola.report(dialog.devola.ready, 'green')
-            return browser
+            return twinsBrowser
         }
     }
 }
