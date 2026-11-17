@@ -195,8 +195,19 @@ module.exports = ({ llm, yorha, dialog, logistics }) => {
                             window.nodeMaintainRequirement({ prdText: selection, moduleName: moduleName.trim() })
                             const toast = document.createElement('div')
                             toast.innerText = toastText
+                            toast.style.cssText = `
+                                position: fixed; top: 20px; right: 20px; z-index: 999999;
+                                background: rgba(0, 0, 0, 0.85); color: #ff0055;
+                                border: 1px solid #ff0055; padding: 12px 24px;
+                                font-size: 15px; font-family: monospace; border-radius: 4px;
+                                box-shadow: 0 0 15px rgba(255, 0, 85, 0.5);
+                                pointer-events: none; transition: opacity 0.4s ease;
+                            `
                             document.body.appendChild(toast)
-                            setTimeout(() => toast.remove(), 2500)
+                            setTimeout(() => {
+                                toast.style.opacity = '0'
+                                setTimeout(() => toast.remove(), 400)
+                            }, 1200)
                         }
                     }
                 })
