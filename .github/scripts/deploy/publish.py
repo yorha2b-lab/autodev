@@ -32,13 +32,13 @@ def assemble_readme():
 ### 📡 3. 深度作战审计 (Deep Dive Recon)
 ![Peak Recon](./plots/bunker_peak_recon.png)
 
-### 🧠 4. 深度情报审计 (Intelligence Intelligence)
+### 🧠 4. 深度情报审计 (Intelligence Audit)
 ![Fusion](./plots/bunker_intelligence_fusion.png)
 
 #### 🛰️ 流量来源实时追踪
 {ref_table}
 
-> 📡 物理封存点: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} CST | Glory to Mankind.
+> 📡 物理封存点: {datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).strftime('%Y-%m-%d %H:%M:%S')} CST | Glory to Mankind.
 '''
     with open('README.md', 'w') as f:
         f.write(report)
