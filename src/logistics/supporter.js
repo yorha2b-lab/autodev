@@ -32,7 +32,14 @@ const killZombiePort = port => {
                 .filter(pid => pid && pid !== '0' && pid !== String(process.pid))
             pids.forEach(pid => execSync(`taskkill /F /PID ${pid}`, { stdio: 'ignore' }))
         } else {
-            execSync(`lsof -ti :${port} | xargs kill -9`, { stdio: 'ignore' })
+            const out = execSync(`lsof -ti :${port} -sTCP:LISTEN`, { encoding: 'utf-8' })
+            const pids = [...new Set(out.split('\n').map(pid => pid.trim()))]
+                .filter(pid => /^\d+$/.test(pid) && Number(pid) > 0 && pid !== String(process.pid))
+            pids.forEach(pid => {
+                try {
+                    process.kill(Number(pid), 'SIGKILL')
+                } catch (e) { }
+            })
         }
     } catch (e) {
         // 杀完了或没占用，直接静默放行
