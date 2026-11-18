@@ -30,6 +30,7 @@ module.exports = ({ yorha, dialog, logistics }) => {
         let browser
         try {
             // 💡 锁死标准宽屏分辨率，防止变形折叠
+            const puppeteer = require('puppeteer')
             browser = await puppeteer.launch({ headless: 'new', defaultViewport: { width: 1440, height: 900 } })
             const page = await browser.newPage()
             let capturedCount = 0
