@@ -122,7 +122,7 @@ module.exports = ({ yorha, dialog, logistics }) => {
             }, browserDialog)
         } catch (error) { }
 
-        await page.goto(remains)
+        if (page.url() === 'about:blank') await page.goto(remains)
         pod042.report(dialog.pod042.scoutReady, 'green')
     }
 
