@@ -59,7 +59,7 @@ module.exports = {
     reboot() {
         const { template, dialog } = instance
         delete require.cache[require.resolve(path.join(process.cwd(), 'bunker', 'config.js'))]
-        instance.labs?.tower?.close()
+        instance.labs?.tower?.destroy()
         instance = null
         return this.init({ template }, dialog)
     }

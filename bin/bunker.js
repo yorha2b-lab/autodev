@@ -75,10 +75,7 @@ program
             const currentBunker = bunker.get()
             currentBunker.yorha.commander.report(dialog.bunker.systemOffline, 'gray')
             terminalCollapse(500, dialog, currentBunker)
-            const scout = await currentBunker.labs?.scout
-            const twins = await currentBunker.labs?.twins
-            scout?.close()
-            twins?.close()
+            Object.values(currentBunker.labs).forEach(lab => typeof lab?.destroy === 'function' && lab.destroy())
         })
     })
 

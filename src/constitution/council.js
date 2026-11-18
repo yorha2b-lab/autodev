@@ -24,7 +24,8 @@ ${realApis}
 
 ⚠️ 强制注意：
 1. 后端极度喜欢用 POST 方法配合 status / invalid / state 实现逻辑软删除，切勿死板寻找 DELETE 方法！
-2. 单行操作通常路径带 /{id} 或接收单个 id 参数；批量操作通常接收 ids 数组。
+2. 后端极度喜欢用 POST 方法配合 page / pages / [pageName] 实现分页查询或分页操作，切勿死板寻找 GET 方法！
+3. 单行操作通常路径带 /{id} 或接收单个 id 参数；批量操作通常接收 ids 数组。
 
 ⚠️ 严禁解释，严禁输出 JSON 之外的内容。
 `.trim()
