@@ -91,7 +91,8 @@ module.exports = ({ llm, yorha, dialog, logistics }) => {
 
         const browserDialog = { toastText: dialog.devola.toast }
         await page.evaluateOnNewDocument(({ toastText }) => {
-
+            if (window.__hasBunkerListener__) return
+            window.__hasBunkerListener__ = true
             const showBunkerInput = () => new Promise(resolve => {
                 const overlay = document.createElement('div')
                 overlay.style.cssText = `
@@ -137,7 +138,6 @@ module.exports = ({ llm, yorha, dialog, logistics }) => {
                     }
                 })
             })
-
             window.addEventListener('contextmenu', async (e) => {
                 const selection = window.getSelection().toString().trim()
                 if (selection && selection.length > 5) {
