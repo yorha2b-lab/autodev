@@ -13,6 +13,12 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-np.clip(x, -50, 50)))
 
 
+def robust_mad_zscore(series):
+    med = np.median(series)
+    mad = np.median(np.abs(series - med))
+    return 0.6745 * (series - med) / max(mad, 1e-6)
+
+
 def load_clean(path, col_name):
     if not os.path.exists(path):
         return pd.DataFrame(columns=['date', col_name, f'{col_name}_Uniques'])
@@ -34,6 +40,9 @@ def prepare_merged_df():
     df_c = load_clean('ghrs-data/clones_ledger.csv', 'Clones')
     df_v = load_clean('ghrs-data/views_ledger.csv', 'Views')
 
+    view_start_date = df_v['date'].min(
+    ) if not df_v.empty else pd.Timestamp.max
+
     df = pd.merge(df_c, df_v, on='date', how='outer').fillna(0)
     df = df.sort_values('date').reset_index(drop=True)
 
@@ -41,6 +50,7 @@ def prepare_merged_df():
         iso = df['date'].dt.isocalendar()
         df['week_key'] = iso['year'].astype(
             str) + '-W' + iso['week'].astype(str).str.zfill(2)
+        df['has_view_record'] = df['date'] >= view_start_date
     return df
 
 
@@ -59,7 +69,6 @@ def peak_recon(df_all):
                      color='#3498db', label='Clones')
     axA.plot(df['date'], df['Clones'], color='#3498db', linewidth=1.3)
 
-    # Scipy 信号寻峰：自动标出次级脉冲波峰
     clones_arr = df['Clones'].to_numpy()
     med = np.median(clones_arr)
     mad = np.median(np.abs(clones_arr - med))
@@ -117,21 +126,21 @@ def peak_recon(df_all):
     axB.set_xlabel('Week')
     axB.tick_params(axis='x', rotation=30)
 
-    # 3.3 比值分析（Symlog 对数缩放，不让 859 压扁其余天）
+    # 3.3 修正为真实重复拉取强度比值（Clones / Unique Cloners），匹配 <3 / 3~5 / >=5 红绿灯阈值
     axC = axes3[2]
-    df['ratio'] = df['Clones'] / df['Views_Uniques'].replace(0, 1)
+    df['ratio'] = df['Clones'] / df['Clones_Uniques'].replace(0, 1)
     colors3 = ['#2ecc71' if r < 3 else '#f39c12' if r <
                5 else '#e74c3c' for r in df['ratio']]
-    axC.bar(df['date'], df['ratio'], color=colors3, alpha=0.75)
+    axC.bar(df['date'], df['ratio'], color=colors3, alpha=0.8)
     axC.axhline(y=df['ratio'].mean(), color='#9b59b6',
                 ls='--', label=f'Mean: {df["ratio"].mean():.2f}')
     axC.axhline(y=df['ratio'].median(), color='#00ffcc',
                 ls=':', label=f'Median: {df["ratio"].median():.2f}')
-    axC.set_yscale('symlog', linthresh=5)
+    axC.set_yscale('symlog', linthresh=3)
     axC.yaxis.set_major_formatter(FuncFormatter(
         lambda x, _: f'{int(x)}' if x >= 0 else ''))
-    axC.set_ylim(bottom=0, top=max(10, df['ratio'].max() * 1.8))
-    axC.set_title('Clones / Unique Visitor Ratio (Symlog | High Ratio = Bots / CI)',
+    axC.set_ylim(bottom=0, top=max(6, df['ratio'].max() * 1.4))
+    axC.set_title('Repeat Intensity Ratio (Clones / Unique Cloners | High Ratio = Bots / CI)',
                   fontsize=14, fontweight='bold')
     axC.legend()
 
@@ -186,14 +195,18 @@ def intelligence_grid(df_all):
     ax1.tick_params(axis='x', rotation=45)
     ax1.grid(True, alpha=0.3)
 
-    # 2. Daily Unique Visitors（真实网页独立访客）
+    # 2. Daily Unique Visitors（仅在有 view 账本后的日期算均值）
     ax2 = axes[0, 1]
+    view_df = df[df['has_view_record']
+                 ] if 'has_view_record' in df.columns else df
+    avg_visitors = view_df['Views_Uniques'].mean(
+    ) if not view_df.empty else 0.0
     ax2.plot(df['date'], df['Views_Uniques'],
              color='#A23B72', linewidth=1.5, alpha=0.85)
     ax2.fill_between(df['date'], df['Views_Uniques'],
                      alpha=0.3, color='#A23B72')
-    ax2.axhline(y=df['Views_Uniques'].mean(), color='red', linestyle='--',
-                alpha=0.7, label=f'Avg: {df["Views_Uniques"].mean():.1f}')
+    ax2.axhline(y=avg_visitors, color='red', linestyle='--',
+                alpha=0.7, label=f'Avg: {avg_visitors:.1f}')
     ax2.set_title('Daily Unique Commanders (Real Web Visitors)',
                   fontsize=12, fontweight='bold')
     ax2.set_ylabel('Unique Visitors')
@@ -203,9 +216,10 @@ def intelligence_grid(df_all):
     ax2.tick_params(axis='x', rotation=45)
     ax2.grid(True, alpha=0.3)
 
-    # 3. Clones vs Unique Visitors（仅拟合有 views 数据的时段 + Spearman ρ）
+    # 3. Clones vs Unique Visitors
     ax3 = axes[1, 0]
-    valid_views = df[(df['Views'] > 0) | (df['Views_Uniques'] > 0)]
+    valid_views = df[df['has_view_record']] if 'has_view_record' in df.columns else df[(
+        df['Views'] > 0) | (df['Views_Uniques'] > 0)]
     plot_df = valid_views if not valid_views.empty else df
     ax3.scatter(plot_df['Views_Uniques'], plot_df['Clones'], alpha=0.65,
                 c=plot_df['date'].map(mdates.date2num), cmap='viridis', s=50)
@@ -223,7 +237,7 @@ def intelligence_grid(df_all):
         ax3.legend(fontsize='small')
     ax3.grid(True, alpha=0.3)
 
-    # 4. 单克隆节点重复强度分布（直方图 + 高斯核密度 KDE 曲线 + P95）
+    # 4. 单克隆节点重复强度分布
     ax4 = axes[1, 1]
     df['clones_per_cloner'] = df['Clones'] / df['Clones_Uniques'].replace(0, 1)
     vals = df['clones_per_cloner']
@@ -264,8 +278,8 @@ def intelligence_grid(df_all):
     max_bar = max(1, weekly_sorted['clones'].max())
     ax5.set_ylim(0, max_bar * 1.15)
     for bar, val in zip(bars, weekly_sorted['clones']):
-        ax5.text(bar.get_x() + bar.get_width() / 2, bar.get_height() +
-                 max_bar * 0.02, str(int(val)), ha='center', va='bottom', fontsize=8)
+        ax5.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + max_bar * 0.02,
+                 str(int(val)), ha='center', va='bottom', fontsize=8)
 
     # 6. 7-Day Moving Average
     ax6 = axes[2, 1]
@@ -300,12 +314,18 @@ def main_dashboard(df_all):
     df = df_all.copy()
     df['cumulative'] = df['Clones'].cumsum()
 
-    # 与 deep_intelligence 同步：Noisy-OR Sigmoid 联合人类信号纯度
+    # 与修正后的 deep_intelligence 同步：重复拉取 + 突发脉冲为主，无头仅轻度辅助
     headless_ratio = df['Clones_Uniques'] / df['Views_Uniques'].replace(0, 1)
     repeat_ratio = df['Clones'] / df['Clones_Uniques'].replace(0, 1)
-    p_headless = sigmoid((headless_ratio - 1.5) * 1.5)
-    p_repeat = sigmoid((repeat_ratio - 2.5) * 1.5)
-    df['bot_prob'] = 1.0 - (1.0 - p_headless) * (1.0 - p_repeat)
+    mad_z = robust_mad_zscore(np.log1p(df['Clones']))
+
+    p_repeat = sigmoid((repeat_ratio - 3.2) * 1.5)
+    p_burst = sigmoid((mad_z - 2.5) * 1.5)
+    p_headless_raw = sigmoid((np.log1p(headless_ratio) - 3.5) * 1.0)
+    p_headless = np.where(df['has_view_record'], p_headless_raw * 0.25, 0.0)
+
+    df['bot_prob'] = 1.0 - (1.0 - p_repeat) * \
+        (1.0 - p_burst) * (1.0 - p_headless)
     df['purity'] = (1.0 - df['bot_prob']) * 100
     df['purity_ewm'] = df['purity'].ewm(span=7, adjust=False).mean()
 
@@ -331,7 +351,7 @@ def main_dashboard(df_all):
     ax2.plot(df['date'], df['cumulative'], color='#0066ff', lw=3)
     ax2.set_title('Bunker Glory: Total Cumulative Growth', color='#0066ff')
 
-    # 3. 信号纯度审计（Noisy-OR Sigmoid + 7日指数平滑包络线）
+    # 3. 信号纯度审计（修正版 Noisy-OR Sigmoid + 7日指数平滑包络线）
     ax_p = fig1.add_subplot(gs1[2])
     ax_p.fill_between(df['date'], df['purity'], color='#ff00ff', alpha=0.1)
     ax_p.plot(df['date'], df['purity'], color='#ff00ff', lw=1.2,
@@ -344,7 +364,7 @@ def main_dashboard(df_all):
         'Neural Cloud Integrity: Human Signal Purity Audit (Noisy-OR Sigmoid %)', color='#ff00ff')
     ax_p.legend(loc='upper right', fontsize='x-small')
 
-    # 4. 作战热力图（保留 #33cc33 霓虹绿，用 dark_palette + Log1p 告别惨白网格）
+    # 4. 作战热力图
     ax3 = fig1.add_subplot(gs1[3])
     pivot = df.assign(day=df['date'].dt.day_name()).pivot_table(
         index='day', columns='week_key', values='Clones', aggfunc='sum'

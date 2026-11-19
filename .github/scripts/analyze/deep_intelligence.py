@@ -52,6 +52,15 @@ def execute_deep_intelligence():
     df_v = pd.read_csv(view_path).rename(
         columns={'uniques': 'unique_visitors'})
 
+    df_c['date'] = pd.to_datetime(df_c['date'], errors='coerce')
+    df_v['date'] = pd.to_datetime(df_v['date'], errors='coerce')
+    df_c = df_c.dropna(subset=['date'])
+    df_v = df_v.dropna(subset=['date'])
+
+    # 记录 views 账本实际开始日期，避免早期缺失日期填 0 污染统计
+    view_start_date = df_v['date'].min(
+    ) if not df_v.empty else pd.Timestamp.max
+
     df = pd.merge(
         df_c[['date', 'clones', 'unique_cloners']],
         df_v[['date', 'views', 'unique_visitors']],
@@ -67,36 +76,45 @@ def execute_deep_intelligence():
         return
 
     # ==================================================
-    # 1. 真实物理特征与 Noisy-OR Sigmoid 门控概率
+    # 1. 真实物理特征与修正版 Noisy-OR Sigmoid 门控概率
     # ==================================================
+    has_view_record = df['date'] >= view_start_date
     headless_ratio = df['unique_cloners'] / df['unique_visitors'].replace(0, 1)
     repeat_ratio = df['clones'] / df['unique_cloners'].replace(0, 1)
 
-    p_headless = sigmoid((headless_ratio - 1.5) * 1.5)
-    p_repeat = sigmoid((repeat_ratio - 2.5) * 1.5)
-
-    # Noisy-OR 独立概率联合门控
-    df['bot_prob'] = 1.0 - (1.0 - p_headless) * (1.0 - p_repeat)
-
-    # Log 空间转换 + MAD 鲁棒异常分数
     df['log_volume'] = np.log1p(df['clones'])
     df['log_cloners'] = np.log1p(df['unique_cloners'])
-    df['log_visitors'] = np.log1p(df['unique_visitors'])
     df['log_repeat'] = np.log1p(repeat_ratio)
     df['mad_z'] = robust_mad_zscore(df['log_volume'])
 
+    # 主信号：单人重复拉取率 + 突发脉冲强度
+    p_repeat = sigmoid((repeat_ratio - 3.2) * 1.5)
+    p_burst = sigmoid((df['mad_z'] - 2.5) * 1.5)
+
+    # 弱辅助信号：CLI 工具不看网页属正常现象，上限封顶 0.25 且仅在有 view 记录时生效
+    p_headless_raw = sigmoid((np.log1p(headless_ratio) - 3.5) * 1.0)
+    p_headless = np.where(has_view_record, p_headless_raw * 0.25, 0.0)
+
+    # Noisy-OR 联合门控
+    df['bot_prob'] = 1.0 - (1.0 - p_repeat) * \
+                            (1.0 - p_burst) * (1.0 - p_headless)
+
     # ==================================================
-    # 2. DBSCAN 行为拓扑聚类 + 轮廓系数评估
+    # 2. DBSCAN 行为拓扑聚类（只用纯粹的克隆行为三维特征）
     # ==================================================
     sil_score = None
     if len(df) >= 4:
         X = StandardScaler().fit_transform(
-            df[['log_volume', 'log_cloners', 'log_visitors', 'log_repeat']]
+            df[['log_volume', 'log_cloners', 'log_repeat']]
         )
-        db = DBSCAN(eps=0.85, min_samples=4).fit(X)
+        db = DBSCAN(eps=0.65, min_samples=4).fit(X)
         df['cluster'] = db.labels_
-        n_clusters = len(set(db.labels_))
-        if 2 <= n_clusters < len(df):
+
+        non_noise_mask = df['cluster'] != -1
+        non_noise_labels = df.loc[non_noise_mask, 'cluster']
+        if non_noise_labels.nunique() >= 2 and non_noise_mask.sum() > non_noise_labels.nunique():
+            sil_score = silhouette_score(X[non_noise_mask], non_noise_labels)
+        elif 2 <= len(set(db.labels_)) < len(df):
             sil_score = silhouette_score(X, db.labels_)
     else:
         df['cluster'] = 0
@@ -113,9 +131,12 @@ def execute_deep_intelligence():
     human_clones = max(0.0, total_clones - bot_clones)
 
     entropy_bits = shannon_entropy(df['clones'])
+
+    # 相关性仅在 views 账本有效时间段内计算，避免缺失期填 0 产生伪相关
+    df_corr = df[has_view_record]
     rho, p_val = (0.0, 1.0)
-    if df['unique_visitors'].nunique() >= 2 and df['clones'].nunique() >= 2:
-        rho, p_val = spearmanr(df['unique_visitors'], df['clones'])
+    if df_corr['unique_visitors'].nunique() >= 2 and df_corr['clones'].nunique() >= 2:
+        rho, p_val = spearmanr(df_corr['unique_visitors'], df_corr['clones'])
 
     df['rank'] = df['cluster'].apply(
         lambda cid: map_rank(cid, baseline_cluster))
@@ -176,10 +197,11 @@ def execute_deep_intelligence():
 
     peak_idx = df['clones'].idxmax()
     peak_row = df.loc[peak_idx]
+    is_right_side = peak_row['log_cloners'] > df['log_cloners'].quantile(0.75)
     ax3.annotate(
         f"PEAK: {int(peak_row['clones'])} (MAD-Z={peak_row['mad_z']:.1f})",
         xy=(peak_row['log_cloners'], peak_row['log_volume']),
-        xytext=(15, -12),
+        xytext=(-130, -10) if is_right_side else (15, -12),
         textcoords='offset points',
         color='yellow',
         fontsize=9.5,
@@ -205,16 +227,4 @@ def execute_deep_intelligence():
     ax3.set_title("Sovereign Logistic Matrix (Log Space)",
                   color='#ff00ff', pad=20)
     ax3.set_xlabel("Log(Unique Cloners + 1)")
-    ax3.set_ylabel("Log(Total Clones + 1)")
-    ax3.grid(alpha=0.1)
-
-    plt.tight_layout()
-    os.makedirs('plots', exist_ok=True)
-    plt.savefig('plots/bunker_intelligence_fusion.png', dpi=120)
-    plt.close(fig)
-
-    print("✅ 全量情报视觉矩阵封存成功！")
-
-
-if __name__ == "__main__":
-    execute_deep_intelligence()
+    ax3.set_ylabel("Log(Total
