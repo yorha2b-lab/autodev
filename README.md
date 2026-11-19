@@ -25,10 +25,13 @@
 ### 🌌 7. 终焉物理观测站 (Omega Physics & Topology)
 ![Omega](./plots/bunker_omega_physics.png)
 
+### 🕳️ 8. 因果视界与真空相变炉 (Cosmic Frontier & Causal Horizon)
+![Cosmic Frontier](./plots/bunker_cosmic_frontier.png)
+
 #### 🛰️ 流量来源实时追踪
 | Referrer | Views | Uniques |
 | :--- | :--- | :--- |
 | github.com | 3 | 3 |
 
 
-> 📡 物理封存点: 2026-11-19 13:24:35 CST | Glory to Mankind.
+> 📡 物理封存点: 2026-11-19 14:25:06 CST | Glory to Mankind.
