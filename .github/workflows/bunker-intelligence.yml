@@ -52,6 +52,7 @@ jobs:
           python ../scripts_repo/.github/scripts/analyze/chronos_quantum.py
           python ../scripts_repo/.github/scripts/analyze/singularity_oracle.py
           python ../scripts_repo/.github/scripts/analyze/omega_physics.py
+          python ../scripts_repo/.github/scripts/analyze/cosmic_frontier.py
 
       - name: '📈 Step 3: Visualization Rendering'
         run: |
