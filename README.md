@@ -19,10 +19,13 @@
 ### ⏳ 5. 超时空分形观测 (Chronos Quantum Matrix)
 ![Chronos](./plots/bunker_chronos_quantum.png)
 
+### 🔮 6. 奇点先知矩阵 (Singularity Oracle)
+![Oracle](./plots/bunker_singularity_oracle.png)
+
 #### 🛰️ 流量来源实时追踪
 | Referrer | Views | Uniques |
 | :--- | :--- | :--- |
 | github.com | 3 | 3 |
 
 
-> 📡 物理封存点: 2026-11-19 13:06:25 CST | Glory to Mankind.
+> 📡 物理封存点: 2026-11-19 13:16:35 CST | Glory to Mankind.
