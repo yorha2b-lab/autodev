@@ -97,7 +97,7 @@ def execute_deep_intelligence():
 
     # Noisy-OR 联合门控
     df['bot_prob'] = 1.0 - (1.0 - p_repeat) * \
-                            (1.0 - p_burst) * (1.0 - p_headless)
+        (1.0 - p_burst) * (1.0 - p_headless)
 
     # ==================================================
     # 2. DBSCAN 行为拓扑聚类（只用纯粹的克隆行为三维特征）
@@ -227,4 +227,16 @@ def execute_deep_intelligence():
     ax3.set_title("Sovereign Logistic Matrix (Log Space)",
                   color='#ff00ff', pad=20)
     ax3.set_xlabel("Log(Unique Cloners + 1)")
-    ax3.set_ylabel("Log(Total
+    ax3.set_ylabel("Log(Total Clones + 1)")
+    ax3.grid(alpha=0.1)
+
+    plt.tight_layout()
+    os.makedirs('plots', exist_ok=True)
+    plt.savefig('plots/bunker_intelligence_fusion.png', dpi=120)
+    plt.close(fig)
+
+    print("✅ 全量情报视觉矩阵封存成功！")
+
+
+if __name__ == "__main__":
+    execute_deep_intelligence()
