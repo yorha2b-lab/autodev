@@ -41,6 +41,9 @@ def assemble_readme():
 ### 🔮 6. 奇点先知矩阵 (Singularity Oracle)
 ![Oracle](./plots/bunker_singularity_oracle.png)
 
+### 🌌 7. 终焉物理观测站 (Omega Physics & Topology)
+![Omega](./plots/bunker_omega_physics.png)
+
 #### 🛰️ 流量来源实时追踪
 {ref_table}
 

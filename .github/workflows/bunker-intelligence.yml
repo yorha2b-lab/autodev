@@ -51,6 +51,7 @@ jobs:
           python ../scripts_repo/.github/scripts/analyze/deep_intelligence.py
           python ../scripts_repo/.github/scripts/analyze/chronos_quantum.py
           python ../scripts_repo/.github/scripts/analyze/singularity_oracle.py
+          python ../scripts_repo/.github/scripts/analyze/omega_physics.py
 
       - name: '📈 Step 3: Visualization Rendering'
         run: |
