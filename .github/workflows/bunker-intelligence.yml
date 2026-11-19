@@ -1,4 +1,4 @@
-name: Bunker Sovereign Intelligence (v8.6)
+name: Bunker Sovereign Intelligence (v9.0)
 
 on:
   schedule:
@@ -49,6 +49,7 @@ jobs:
           cd data_repo
           # 执行“肉机比”扫描与“军衔”聚类分析
           python ../scripts_repo/.github/scripts/analyze/deep_intelligence.py
+          python ../scripts_repo/.github/scripts/analyze/chronos_quantum.py
 
       - name: '📈 Step 3: Visualization Rendering'
         run: |

@@ -17,7 +17,7 @@ def assemble_readme():
     else:
         ref_table += '| No Signal | - | - |\n'
 
-    report = f'''# 🛰️ 地堡终极运行报告 (Sovereign Dashboard v8.5)
+    report = f'''# 🛰️ 地堡终极运行报告 (Sovereign Dashboard V9.0)
 ## 📊 核心战力指标
 - **累计物理克隆**: `{stats['total_clones']}` 次
 - **社群声望**: ⭐ `{stats['stars']}` / 🍴 `{stats['forks']}`
@@ -34,6 +34,9 @@ def assemble_readme():
 
 ### 🧠 4. 深度情报审计 (Intelligence Audit)
 ![Fusion](./plots/bunker_intelligence_fusion.png)
+
+### ⏳ 5. 超时空分形观测 (Chronos Quantum Matrix)
+![Chronos](./plots/bunker_chronos_quantum.png)
 
 #### 🛰️ 流量来源实时追踪
 {ref_table}
