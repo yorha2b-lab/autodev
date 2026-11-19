@@ -38,6 +38,9 @@ def assemble_readme():
 ### ⏳ 5. 超时空分形观测 (Chronos Quantum Matrix)
 ![Chronos](./plots/bunker_chronos_quantum.png)
 
+### 🔮 6. 奇点先知矩阵 (Singularity Oracle)
+![Oracle](./plots/bunker_singularity_oracle.png)
+
 #### 🛰️ 流量来源实时追踪
 {ref_table}
 

@@ -50,6 +50,7 @@ jobs:
           # 执行“肉机比”扫描与“军衔”聚类分析
           python ../scripts_repo/.github/scripts/analyze/deep_intelligence.py
           python ../scripts_repo/.github/scripts/analyze/chronos_quantum.py
+          python ../scripts_repo/.github/scripts/analyze/singularity_oracle.py
 
       - name: '📈 Step 3: Visualization Rendering'
         run: |
