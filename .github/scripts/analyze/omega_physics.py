@@ -12,7 +12,8 @@ def morlet_cwt(ts, periods, w=6.0):
     ts = ts - np.mean(ts)
     n = len(ts)
     flambda = (4.0 * np.pi) / (w + np.sqrt(2.0 + w ** 2))
-    t_grid = np.arange(-(n // 2), (n // 2) + 1, dtype=float)
+    half = max(0, (n - 1) // 2)
+    t_grid = np.arange(-half, half + 1, dtype=float)
     power = np.zeros((len(periods), n), dtype=float)
 
     for idx, period in enumerate(periods):
