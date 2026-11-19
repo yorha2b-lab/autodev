@@ -47,6 +47,9 @@ def assemble_readme():
 ### 🕳️ 8. 因果视界与真空相变炉 (Cosmic Frontier & Causal Horizon)
 ![Cosmic Frontier](./plots/bunker_cosmic_frontier.png)
 
+### ⚛️ 9. 量子隧穿与高维创世神谕 (Quantum Metaphysics & Reality Audit)
+![Metaphysics](./plots/bunker_quantum_metaphysics.png)
+
 #### 🛰️ 流量来源实时追踪
 {ref_table}
 
