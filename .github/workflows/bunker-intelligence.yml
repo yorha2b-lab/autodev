@@ -55,6 +55,8 @@ jobs:
           python ../scripts_repo/.github/scripts/analyze/cosmic_frontier.py
           python ../scripts_repo/.github/scripts/analyze/quantum_metaphysics.py
           python ../scripts_repo/.github/scripts/analyze/bunker_apotheosis.py
+          python ../scripts_repo/.github/scripts/analyze/ml_genesis.py
+          python ../scripts_repo/.github/scripts/analyze/living_orbit_gif.py
 
       - name: '📈 Step 3: Visualization Rendering'
         run: |

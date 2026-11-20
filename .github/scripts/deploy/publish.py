@@ -53,6 +53,12 @@ def assemble_readme():
 ### 🧬 10. 神格飞升与生物声学终局炉 (Cosmic Apotheosis & Bio-Acoustics)
 ![Apotheosis](./plots/bunker_apotheosis.png)
 
+### 🛸 11. 卡尔曼天眼与 AI 创世法则 (Astral ML & Genesis Laws)
+![Astral Genesis](./plots/bunker_astral_genesis.png)
+
+### 🌀 12. 实时双核星际运转仪 (Living Orbital Telemetry)
+![Living Orbit](./plots/bunker_living_orbit.gif)
+
 #### 🛰️ 流量来源实时追踪
 {ref_table}
 
