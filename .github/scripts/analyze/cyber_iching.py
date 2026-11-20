@@ -26,6 +26,7 @@ def setup_cjk_font():
             if key in low_name:
                 plt.rcParams['font.sans-serif'] = [real_name, 'DejaVu Sans']
                 plt.rcParams['axes.unicode_minus'] = False
+                plt.rcParams['font.monospace'] = [real_name, 'DejaVu Sans Mono']
                 return True
     plt.rcParams['axes.unicode_minus'] = False
     return False
@@ -470,7 +471,7 @@ def plot_wuxing_pentagon(ax, dates, y):
                 fontweight='bold', ha='center', va='center')
 
     ax.set_xlim(-1.55, 1.55)
-    ax.set_ylim(-1.48, 1.50)
+    ax.set_ylim(-1.66, 1.50)
     ax.set_aspect('equal', adjustable='box')
     ax.axis('off')
     ax.set_title(tx('干支五行生克星阵 (绿生 / 红克)', 'WuXing Five-Element Pentagon (Gen/Overcome)'),
@@ -484,7 +485,7 @@ def plot_wuxing_pentagon(ax, dates, y):
         f'最旺五行: {b_name} ({means[best_e]:.1f}) | 命中缺: {w_name} ({means[weak_e]:.1f})\nANOVA p={p_val:.3f}',
         f'Strongest: {b_name} ({means[best_e]:.1f}) | Weakest: {w_name} ({means[weak_e]:.1f})\nANOVA p={p_val:.3f}'
     )
-    ax.text(0.0, -1.42, info, ha='center', va='bottom', fontsize=8.2, color='#ffbe0b',
+    ax.text(0.0, -1.60, info, ha='center', va='bottom', fontsize=8.2, color='#ffbe0b',
             family='monospace',
             bbox=dict(boxstyle='round,pad=0.35', facecolor='#0a0f18', edgecolor='#ffbe0b', alpha=0.88))
 

@@ -61,6 +61,7 @@ jobs:
           python ../scripts_repo/.github/scripts/analyze/living_orbit_gif.py
           python ../scripts_repo/.github/scripts/analyze/imperial_pantheon.py
           python ../scripts_repo/.github/scripts/analyze/cyber_iching.py
+          python ../scripts_repo/.github/scripts/analyze/solar_silicon_chronicle.py
 
       - name: '📈 Step 3: Visualization Rendering'
         run: |

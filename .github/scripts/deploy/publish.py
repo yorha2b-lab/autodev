@@ -65,6 +65,9 @@ def assemble_readme():
 ### ☯️ 14. 天机道长赛博周易八卦坛 (Cyber I Ching Oracle)
 ![I Ching](./plots/bunker_cyber_iching.png)
 
+### 🌞 15. 节气天象与硅基晶圆终极番外 (Solar-Silicon Chronicle)
+![Solar Silicon](./plots/bunker_solar_silicon.png)
+
 #### 🛰️ 流量来源实时追踪
 {ref_table}
 
