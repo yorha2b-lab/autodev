@@ -353,7 +353,7 @@ def draw_tarot_panel(ax, df):
 
 
 def draw_almanac_panel(ax, df):
-    """Panel 4: 地堡赛博黄历 · 水逆监测与今日签筒"""
+    """Panel 4: 地堡赛博黄历 · 动态宜忌、水逆监测与今日签筒"""
     ax.set_facecolor('#05080f')
     ax.set_xlim(0, 10)
     ax.set_ylim(0, 10)
@@ -364,6 +364,8 @@ def draw_almanac_panel(ax, df):
     hist_med = float(df['clones'].median())
     last_dt = df['date'].iloc[-1]
     last_clones = int(df['clones'].iloc[-1])
+    total_clones = float(df['clones'].sum())
+    weekday = int(last_dt.dayofweek)
 
     cv = float(recent14.std() / max(recent14.mean(), 1.0)
                ) if len(recent14) > 1 else 0.0
@@ -378,6 +380,43 @@ def draw_almanac_panel(ax, df):
     else:
         lot_rank, lot_col = '中吉签 · 稳进', '#3498db'
 
+    # --- 动态【宜】【忌】生成器（按真实指标条件触发 + 当日哈希微调）---
+    rng = np.random.default_rng(int(last_dt.strftime('%Y%m%d')) + last_clones)
+    yi_list, ji_list = [], []
+
+    if weekday == 4:
+        yi_list.append('周五冲刺收尾早下班')
+    elif weekday >= 5:
+        yi_list.append('周末躺平休养生息')
+        ji_list.append('周末加班硬改Config')
+    else:
+        yi_list.append('拖截图进mission秒出CRUD')
+
+    if last_clones >= 60:
+        yi_list.append('趁热发版冲刺Milestone')
+        ji_list.append('无脑刷Actions自己拉自己')
+    elif last_clones <= 5:
+        yi_list.append('开启twins划词核对PRD')
+        ji_list.append('对着空Mock干等联调')
+
+    if retro_pct >= 50:
+        yi_list.append('稳住脚步清理僵尸端口')
+        ji_list.append('同时甩十张4K大图压爆网关')
+    else:
+        yi_list.append('静默迭代写StandardParts')
+
+    yi_extra = ['开启tower代理自动对齐', '用scout右键考古旧系统', '给9S放假去喝杯茶']
+    ji_extra = ['不看schema裸写JSX', '手写重复表格配置列', '强杀Chrome不删Lock']
+    for item in rng.permutation(yi_extra):
+        if len(yi_list) < 3 and item not in yi_list:
+            yi_list.append(item)
+    for item in rng.permutation(ji_extra):
+        if len(ji_list) < 3 and item not in ji_list:
+            ji_list.append(item)
+
+    yi_text = '【宜】 ' + ' / '.join(yi_list[:3])
+    ji_text = '【忌】 ' + ' / '.join(ji_list[:3])
+
     card = FancyBboxPatch(
         (0.35, 0.35), 9.3, 9.2,
         boxstyle='round,pad=0.1,rounding_size=0.35',
@@ -388,25 +427,20 @@ def draw_almanac_panel(ax, df):
     ax.text(5.0, 8.85, f"【 地堡今日运势：{lot_rank} 】",
             color=lot_col, fontsize=15, fontweight='bold', ha='center')
     ax.text(5.0, 8.05, f"占卜基准日: {last_dt.strftime('%Y-%m-%d')} | 综合气运: {fortune} / 100",
-            color='#bbb', fontsize=10, family='monospace', ha='center')
+            color='#bbb', fontsize=10, ha='center')
 
     ax.plot([0.9, 9.1], [7.45, 7.45], color='#333', lw=1.2)
-
-    yi_text = "【宜】 拖截图生成CRUD / 静默迭代 / 周五冲刺收尾"
-    ji_text = "【忌】 周日硬改Config / 无脑刷Actions自己拉自己"
-    ax.text(1.0, 6.65, yi_text, color='#2ecc71',
-            fontsize=11, fontweight='bold')
-    ax.text(1.0, 5.75, ji_text, color='#e74c3c',
-            fontsize=11, fontweight='bold')
-
+    ax.text(0.85, 6.65, yi_text, color='#2ecc71',
+            fontsize=10.2, fontweight='bold')
+    ax.text(0.85, 5.75, ji_text, color='#e74c3c',
+            fontsize=10.2, fontweight='bold')
     ax.plot([0.9, 9.1], [5.05, 5.05], color='#333', lw=1.2)
 
     bars = [
         ('代码运 (近期活力)', int(np.clip(recent7.mean() /
          max(hist_med, 1.0) * 65, 25, 98)), '#00ffcc'),
         ('护盾值 (抗噪稳态)', int(np.clip(100 - retro_pct * 0.7, 30, 96)), '#33cc33'),
-        ('破万势 (进度冲刺)', int(
-            np.clip(df['clones'].sum() / 10000.0 * 100, 10, 99)), '#f1c40f'),
+        ('破万势 (进度冲刺)', int(np.clip(total_clones / 10000.0 * 100, 10, 99)), '#f1c40f'),
         ('水逆值 (波动风险)', retro_pct, '#ff00ff'),
     ]
 
