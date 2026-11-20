@@ -18,10 +18,14 @@ def assemble_readme():
         ref_table += '| No Signal | - | - |\n'
 
     report = f'''# 🛰️ 地堡终极运行报告 (Sovereign Dashboard V9.0)
-## 📊 核心战力指标
-- **累计物理克隆**: `{stats['total_clones']}` 次
-- **社群声望**: ⭐ `{stats['stars']}` / 🍴 `{stats['forks']}`
-- **地堡协议防护**: AGPL-3.0 生效中
+
+![Bunker HUD](./plots/bunker_hud.svg)
+
+### 🌀 0. 实时双核星际运转仪 (Living Orbital Telemetry)
+![Living Orbit](./plots/bunker_living_orbit.gif)
+
+### 🖥️ 1. 实时作战看板 (Visual Radar)
+![Main](./plots/bunker_main_v7.png)
 
 ### 🖥️ 1. 实时作战看板 (Visual Radar)
 ![Main](./plots/bunker_main_v7.png)
@@ -56,17 +60,17 @@ def assemble_readme():
 ### 🛸 11. 卡尔曼天眼与 AI 创世法则 (Astral ML & Genesis Laws)
 ![Astral Genesis](./plots/bunker_astral_genesis.png)
 
-### 🌀 12. 实时双核星际运转仪 (Living Orbital Telemetry)
-![Living Orbit](./plots/bunker_living_orbit.gif)
-
-### 🏛️ 13. 马科维茨组合与星盘万神殿 (Imperial Portfolio & Spectral Pantheon)
+### 🏛️ 12. 马科维茨组合与星盘万神殿 (Imperial Portfolio & Spectral Pantheon)
 ![Pantheon](./plots/bunker_imperial_pantheon.png)
 
-### ☯️ 14. 天机道长赛博周易八卦坛 (Cyber I Ching Oracle)
+### ☯️ 13. 天机道长赛博周易八卦坛 (Cyber I Ching Oracle)
 ![I Ching](./plots/bunker_cyber_iching.png)
 
-### 🌞 15. 节气天象与硅基晶圆终极番外 (Solar-Silicon Chronicle)
+### 🌞 14. 节气天象与硅基晶圆终极番外 (Solar-Silicon Chronicle)
 ![Solar Silicon](./plots/bunker_solar_silicon.png)
+
+### 📜 15. 克苏鲁矩阵与谱图终极法典 (Deep Codex & Spectral Geometry)
+![Deep Codex](./plots/bunker_deep_codex.png)
 
 #### 🛰️ 流量来源实时追踪
 {ref_table}

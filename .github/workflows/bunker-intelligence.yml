@@ -62,12 +62,14 @@ jobs:
           python ../scripts_repo/.github/scripts/analyze/imperial_pantheon.py
           python ../scripts_repo/.github/scripts/analyze/cyber_iching.py
           python ../scripts_repo/.github/scripts/analyze/solar_silicon_chronicle.py
+          python ../scripts_repo/.github/scripts/analyze/deep_codex.py
 
       - name: '📈 Step 3: Visualization Rendering'
         run: |
           cd data_repo
           # 渲染核心看板
           python ../scripts_repo/.github/scripts/render/dashboard.py
+          python ../scripts_repo/.github/scripts/render/hud_banner.py
 
       - name: '💾 Step 4: Deployment & Sealing'
         run: |
