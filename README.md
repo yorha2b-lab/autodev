@@ -8,9 +8,6 @@
 ### 🖥️ 1. 实时作战看板 (Visual Radar)
 ![Main](./plots/bunker_main_v7.png)
 
-### 🖥️ 1. 实时作战看板 (Visual Radar)
-![Main](./plots/bunker_main_v7.png)
-
 ### 🔍 2. 战略情报大屏 (Intelligence Grid)
 ![Intelligence](./plots/bunker_intelligence_grid.png)
 
@@ -47,10 +44,13 @@
 ### ☯️ 13. 天机道长赛博周易八卦坛 (Cyber I Ching Oracle)
 ![I Ching](./plots/bunker_cyber_iching.png)
 
-### 🌞 14. 节气天象与硅基晶圆终极番外 (Solar-Silicon Chronicle)
+### 🃏 14. 太虚玄机塔罗星阵 (Cyber Tarot & Qimen Matrix)
+![Arcana](./plots/mystic_arcana.png)
+
+### 🌞 15. 节气天象与硅基晶圆终极番外 (Solar-Silicon Chronicle)
 ![Solar Silicon](./plots/bunker_solar_silicon.png)
 
-### 📜 15. 克苏鲁矩阵与谱图终极法典 (Deep Codex & Spectral Geometry)
+### 📜 16. 克苏鲁矩阵与谱图终极法典 (Deep Codex & Spectral Geometry)
 ![Deep Codex](./plots/bunker_deep_codex.png)
 
 #### 🛰️ 流量来源实时追踪
@@ -59,4 +59,4 @@
 | github.com | 1 | 1 |
 
 
-> 📡 物理封存点: 2026-11-20 14:48:08 CST | Glory to Mankind.
+> 📡 物理封存点: 2026-11-20 15:50:30 CST | Glory to Mankind.
