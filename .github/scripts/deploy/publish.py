@@ -63,10 +63,13 @@ def assemble_readme():
 ### ☯️ 13. 天机道长赛博周易八卦坛 (Cyber I Ching Oracle)
 ![I Ching](./plots/bunker_cyber_iching.png)
 
-### 🌞 14. 节气天象与硅基晶圆终极番外 (Solar-Silicon Chronicle)
+### 🃏 14. 太虚玄机塔罗星阵 (Cyber Tarot & Qimen Matrix)
+![Arcana](./plots/mystic_arcana.png)
+
+### 🌞 15. 节气天象与硅基晶圆终极番外 (Solar-Silicon Chronicle)
 ![Solar Silicon](./plots/bunker_solar_silicon.png)
 
-### 📜 15. 克苏鲁矩阵与谱图终极法典 (Deep Codex & Spectral Geometry)
+### 📜 16. 克苏鲁矩阵与谱图终极法典 (Deep Codex & Spectral Geometry)
 ![Deep Codex](./plots/bunker_deep_codex.png)
 
 #### 🛰️ 流量来源实时追踪

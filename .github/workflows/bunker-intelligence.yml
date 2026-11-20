@@ -63,6 +63,7 @@ jobs:
           python ../scripts_repo/.github/scripts/analyze/cyber_iching.py
           python ../scripts_repo/.github/scripts/analyze/solar_silicon_chronicle.py
           python ../scripts_repo/.github/scripts/analyze/deep_codex.py
+          python ../scripts_repo/.github/scripts/analyze/mystic_arcana.py
 
       - name: '📈 Step 3: Visualization Rendering'
         run: |
