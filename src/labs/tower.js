@@ -53,6 +53,8 @@ module.exports = ({ yorha, dialog, logistics, headquarters }) => {
             })
         })
 
+        proxy.on('error', (err, req, res) => commander.report(err.message, 'red'))
+
         server = http.createServer(async (req, res) => {
             if (!proxyTarget) {
                 return
