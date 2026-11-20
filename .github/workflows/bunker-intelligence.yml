@@ -35,7 +35,9 @@ jobs:
           python-version: '3.10'
 
       - name: Install Dependencies
-        run: pip install matplotlib pandas seaborn scipy numpy requests scikit-learn
+        run: |
+          sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
+          pip install matplotlib pandas seaborn scipy numpy requests scikit-learn
 
       # 💡 步骤 3：运行脚本，注意现在的相对路径！
       # 我们在当前根目录运行，调用 scripts_repo 里的脚本，去处理 data_repo 里的数据
@@ -58,6 +60,7 @@ jobs:
           python ../scripts_repo/.github/scripts/analyze/ml_genesis.py
           python ../scripts_repo/.github/scripts/analyze/living_orbit_gif.py
           python ../scripts_repo/.github/scripts/analyze/imperial_pantheon.py
+          python ../scripts_repo/.github/scripts/analyze/cyber_iching.py
 
       - name: '📈 Step 3: Visualization Rendering'
         run: |
