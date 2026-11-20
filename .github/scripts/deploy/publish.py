@@ -27,9 +27,6 @@ def assemble_readme():
 ### 🖥️ 1. 实时作战看板 (Visual Radar)
 ![Main](./plots/bunker_main_v7.png)
 
-### 🖥️ 1. 实时作战看板 (Visual Radar)
-![Main](./plots/bunker_main_v7.png)
-
 ### 🔍 2. 战略情报大屏 (Intelligence Grid)
 ![Intelligence](./plots/bunker_intelligence_grid.png)
 
