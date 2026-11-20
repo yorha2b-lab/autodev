@@ -59,6 +59,9 @@ def assemble_readme():
 ### 🌀 12. 实时双核星际运转仪 (Living Orbital Telemetry)
 ![Living Orbit](./plots/bunker_living_orbit.gif)
 
+### 🏛️ 13. 马科维茨组合与星盘万神殿 (Imperial Portfolio & Spectral Pantheon)
+![Pantheon](./plots/bunker_imperial_pantheon.png)
+
 #### 🛰️ 流量来源实时追踪
 {ref_table}
 
