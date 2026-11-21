@@ -28,15 +28,15 @@
     POD 042 // SOVEREIGN BUNKER HUD [V9.0]
   </text>
   <text x="856" y="31" text-anchor="end" fill="#8ecae6" font-family="Consolas, Monaco, monospace" font-size="10.5">
-    AGPL-3.0 ACTIVE  |  SYNC: 2026-11-19  |  16 TEMPLES ONLINE
+    AGPL-3.0 ACTIVE  |  SYNC: 2026-11-20  |  16 TEMPLES ONLINE
   </text>
   <line x1="20" y1="44" x2="860" y2="44" stroke="#1b3a4b" stroke-width="1"/>
 
   <!-- KPI 卡片 1: 累计克隆 -->
   <rect x="20" y="56" width="166" height="88" rx="4" fill="#08101d" stroke="#1b3a4b" stroke-width="1"/>
   <text x="32" y="75" fill="#8ecae6" font-family="Consolas, Monaco, monospace" font-size="10">TOTAL CLONES</text>
-  <text x="32" y="109" fill="#39ff14" font-family="Consolas, Monaco, monospace" font-size="26" font-weight="bold">8,552</text>
-  <text x="32" y="131" fill="#ffbe0b" font-family="Consolas, Monaco, monospace" font-size="10">10K TARGET: 85.5%</text>
+  <text x="32" y="109" fill="#39ff14" font-family="Consolas, Monaco, monospace" font-size="26" font-weight="bold">8,683</text>
+  <text x="32" y="131" fill="#ffbe0b" font-family="Consolas, Monaco, monospace" font-size="10">10K TARGET: 86.8%</text>
 
   <!-- KPI 卡片 2: 社群声望 -->
   <rect x="198" y="56" width="166" height="88" rx="4" fill="#08101d" stroke="#1b3a4b" stroke-width="1"/>
@@ -49,19 +49,19 @@
   <text x="388" y="75" fill="#8ecae6" font-family="Consolas, Monaco, monospace" font-size="10">COSMIC TELEMETRY</text>
   <text x="388" y="99" fill="#00f5d4" font-family="Consolas, Monaco, monospace" font-size="13" font-weight="bold">LAW: LOG-NORMAL</text>
   <text x="388" y="117" fill="#ff4d6d" font-family="Consolas, Monaco, monospace" font-size="10.5">APEX: 859 (06-23)</text>
-  <text x="388" y="133" fill="#adb5bd" font-family="Consolas, Monaco, monospace" font-size="10">TODAY: 128 CLONES</text>
+  <text x="388" y="133" fill="#adb5bd" font-family="Consolas, Monaco, monospace" font-size="10">TODAY: 131 CLONES</text>
 
   <!-- 破万进度条 + DNA 基因组 -->
   <text x="24" y="167" fill="#00f5d4" font-family="Consolas, Monaco, monospace" font-size="10" font-weight="bold">
-    10,000 CLONE SINGULARITY PROGRESS (8,552 / 10,000)
+    10,000 CLONE SINGULARITY PROGRESS (8,683 / 10,000)
   </text>
   <text x="540" y="167" text-anchor="end" fill="#39ff14" font-family="Consolas, Monaco, monospace" font-size="10">
-    1,448 LEFT
+    1,317 LEFT
   </text>
   <rect x="24" y="175" width="516" height="12" rx="3" fill="#0d1b2a" stroke="#1b3a4b" stroke-width="1"/>
-  <rect x="24" y="175" width="441.3" height="12" rx="3" fill="url(#barGrad)"/>
+  <rect x="24" y="175" width="448.0" height="12" rx="3" fill="url(#barGrad)"/>
   <text x="24" y="209" fill="#8ecae6" font-family="Consolas, Monaco, monospace" font-size="10">
-    DNA: 5'-GACACCGGGAATGGGGGG...-3'  |  231 DAYS  |  AVG: 37.0/D
+    DNA: 5'-GACACCGGGAATGGGGGG...-3'  |  232 DAYS  |  AVG: 37.4/D
   </text>
 
   <!-- 右侧 30 天实时心跳折线 -->
@@ -70,11 +70,11 @@
     30D HEARTBEAT SPARKLINE
   </text>
   <text x="848" y="74" text-anchor="end" fill="#ffbe0b" font-family="Consolas, Monaco, monospace" font-size="9.5">
-    MAX 128 / MIN 2
+    MAX 131 / MIN 2
   </text>
   <line x1="572" y1="196" x2="846" y2="196" stroke="#1b3a4b" stroke-dasharray="3,3" stroke-width="1"/>
-  <polygon points="572.0,196.0 572.0,165.4 581.4,193.2 590.9,153.5 600.3,180.5 609.8,187.7 619.2,194.0 628.7,186.9 638.1,193.2 647.6,182.9 657.0,182.9 666.5,174.2 675.9,191.6 685.4,178.9 694.8,161.5 704.3,182.9 713.7,192.4 723.2,159.9 732.6,176.5 742.1,190.8 751.5,169.4 761.0,181.3 770.4,193.2 779.9,176.5 789.3,175.0 798.8,188.4 808.2,186.1 817.7,187.7 827.1,182.1 836.6,158.3 846.0,94.0 846.0,196.0" fill="url(#sparkFill)"/>
-  <polyline points="572.0,165.4 581.4,193.2 590.9,153.5 600.3,180.5 609.8,187.7 619.2,194.0 628.7,186.9 638.1,193.2 647.6,182.9 657.0,182.9 666.5,174.2 675.9,191.6 685.4,178.9 694.8,161.5 704.3,182.9 713.7,192.4 723.2,159.9 732.6,176.5 742.1,190.8 751.5,169.4 761.0,181.3 770.4,193.2 779.9,176.5 789.3,175.0 798.8,188.4 808.2,186.1 817.7,187.7 827.1,182.1 836.6,158.3 846.0,94.0" fill="none" stroke="#39ff14" stroke-width="2" stroke-linejoin="round"/>
+  <polygon points="572.0,196.0 572.0,193.2 581.4,154.5 590.9,180.8 600.3,187.8 609.8,194.0 619.2,187.0 628.7,193.2 638.1,183.1 647.6,183.1 657.0,174.6 666.5,191.7 675.9,179.3 685.4,162.2 694.8,183.1 704.3,192.4 713.7,160.7 723.2,176.9 732.6,190.9 742.1,170.0 751.5,181.6 761.0,193.2 770.4,176.9 779.9,175.4 789.3,188.6 798.8,186.2 808.2,187.8 817.7,182.4 827.1,159.1 836.6,96.3 846.0,94.0 846.0,196.0" fill="url(#sparkFill)"/>
+  <polyline points="572.0,193.2 581.4,154.5 590.9,180.8 600.3,187.8 609.8,194.0 619.2,187.0 628.7,193.2 638.1,183.1 647.6,183.1 657.0,174.6 666.5,191.7 675.9,179.3 685.4,162.2 694.8,183.1 704.3,192.4 713.7,160.7 723.2,176.9 732.6,190.9 742.1,170.0 751.5,181.6 761.0,193.2 770.4,176.9 779.9,175.4 789.3,188.6 798.8,186.2 808.2,187.8 817.7,182.4 827.1,159.1 836.6,96.3 846.0,94.0" fill="none" stroke="#39ff14" stroke-width="2" stroke-linejoin="round"/>
   <circle cx="846.0" cy="94.0" r="4" fill="#00f5d4" stroke="#ffffff" stroke-width="1.2">
     <animate attributeName="r" values="3.5;6;3.5" dur="1.8s" repeatCount="indefinite"/>
   </circle>
