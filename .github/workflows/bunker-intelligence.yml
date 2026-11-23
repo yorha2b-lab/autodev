@@ -49,30 +49,9 @@ jobs:
       - name: '🧠 Step 2: Intelligence Analysis'
         run: |
           cd data_repo
-          # 执行“肉机比”扫描与“军衔”聚类分析
-          python ../scripts_repo/.github/scripts/analyze/deep_intelligence.py
-          python ../scripts_repo/.github/scripts/analyze/chronos_quantum.py
-          python ../scripts_repo/.github/scripts/analyze/singularity_oracle.py
-          python ../scripts_repo/.github/scripts/analyze/omega_physics.py
-          python ../scripts_repo/.github/scripts/analyze/cosmic_frontier.py
-          python ../scripts_repo/.github/scripts/analyze/quantum_metaphysics.py
-          python ../scripts_repo/.github/scripts/analyze/bunker_apotheosis.py
-          python ../scripts_repo/.github/scripts/analyze/ml_genesis.py
-          python ../scripts_repo/.github/scripts/analyze/living_orbit_gif.py
-          python ../scripts_repo/.github/scripts/analyze/imperial_pantheon.py
-          python ../scripts_repo/.github/scripts/analyze/cyber_iching.py
-          python ../scripts_repo/.github/scripts/analyze/solar_silicon_chronicle.py
-          python ../scripts_repo/.github/scripts/analyze/deep_codex.py
-          python ../scripts_repo/.github/scripts/analyze/mystic_arcana.py
+          python ../scripts_repo/.github/scripts/monograph_engine.py
 
-      - name: '📈 Step 3: Visualization Rendering'
-        run: |
-          cd data_repo
-          # 渲染核心看板
-          python ../scripts_repo/.github/scripts/render/dashboard.py
-          python ../scripts_repo/.github/scripts/render/hud_banner.py
-
-      - name: '💾 Step 4: Deployment & Sealing'
+      - name: '💾 Step 3: Deployment & Sealing'
         run: |
           cd data_repo
           # 物理封存至 README
