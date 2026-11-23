@@ -123,7 +123,7 @@ Time series are transformed into computer-vision tensors, optimal transport metr
 ![Cyber I Ching](./plots/bunker_cyber_iching.png)
 *Fig. 15. Prior-Heaven Taiji Bagua compass, 6-line coin-free cyber hexagram divination, 64-hexagram traversal board, WuXing five-element ANOVA pentagon, 12 Earthly Branches zodiac pillars, and Bagua Markov transitions.*
 
-![Mystic Arcana](./plots/bunker_mystic_arcana.png)
+![Mystic Arcana](./plots/mystic_arcana.png)
 *Fig. 16. Qimen Dunjia Luoshu 9-palace tactical board, Western zodiac natal chart with aspect chords, Major Arcana 3-card tarot spread, and dynamic cyber almanac with mercury retrograde monitor.*
 
 </details>
@@ -160,4 +160,4 @@ Even under zero active promotion, `yorha2b-lab/autodev` exhibits a stationary, w
   year    = {2026},
   note    = {Repository: https://github.com/yorha2b-lab/autodev}
 }
-📡 Physical Seal Timestamp: 2026-11-23 09:48:16 CST | Glory to Mankind.
+📡 Physical Seal Timestamp: 2026-11-23 09:51:36 CST | Glory to Mankind.
