@@ -213,9 +213,8 @@ Even under zero active promotion, `yorha2b-lab/autodev` exhibits a stationary, w
 📡 Physical Seal Timestamp: {cst_now} CST | Glory to Mankind.
 '''
 
-
-with open('README.md', 'w', encoding='utf-8') as f:
-    f.write(report)
+    with open('README.md', 'w', encoding='utf-8') as f:
+        f.write(report)
 
 
 def git_push():
