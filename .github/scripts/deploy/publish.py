@@ -237,6 +237,6 @@ def git_push():
         print(f'⚠️ Git push skipped: {e}')
 
 
-if name == 'main':
+if __name__ == "__main__":
     assemble_readme()
     git_push()
