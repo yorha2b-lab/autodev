@@ -1,4 +1,3 @@
-import { Fragment } from 'react'
 import { MyBaseForm } from './MyBaseForm'
 import { AliyunOSSUpload } from './AliyunOSSUpload'
 import { Tree, Radio, Input, Upload, Select, Cascader, Checkbox, DatePicker, InputNumber, TreeSelect, AutoComplete } from 'antd'
@@ -9,7 +8,6 @@ const componentDict = {
     date: { Component: DatePicker },
     number: { Component: InputNumber },
     password: { Component: Input.Password },
-    ossUpload: { Component: AliyunOSSUpload },
     default: {
         Component: Input,
         props: () => ({ allowClear: true })
@@ -24,6 +22,10 @@ const componentDict = {
     },
     upload: {
         Component: Upload,
+        props: ({ item }) => ({ ...item.uploadProps })
+    },
+    ossUpload: {
+        Component: AliyunOSSUpload,
         props: ({ item }) => ({ ...item.uploadProps })
     },
     auto: {
@@ -60,14 +62,18 @@ export const formNode = ({ item, form }) => {
 
     if (item.type === 'group' && Array.isArray(item.groups)) {
         return (
-            <Input.Group compact style={{ width: item.width ?? '100%', display: 'flex', ...item.style }}>
+            <Row gutter={8} align='middle' style={{ width: item.width ?? '100%', ...item.style }}>
                 {item.groups.map((subItem, ind) => (
-                    <Fragment key={subItem.name}>
-                        <div style={{ flex: 1, minWidth: 0, marginRight: 8 }}><MyBaseForm item={subItem} form={form} /></div>
-                        {ind < item.groups.length - 1 && <span style={{ color: '#888', whiteSpace: 'nowrap', marginRight: 8 }}>{item.separator}</span>}
-                    </Fragment>
+                    <Col span={subItem.span ?? Math.floor(24 / item.groups.length)} key={subItem.name}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <MyBaseForm item={{ ...subItem, style: { marginBottom: 0, ...subItem.style } }} form={form} />
+                            </div>
+                            {ind < item.groups.length - 1 && item.separator && (<span style={{ color: '#888', whiteSpace: 'nowrap' }}>{item.separator}</span>)}
+                        </div>
+                    </Col>
                 ))}
-            </Input.Group>
+            </Row>
         )
     }
 
