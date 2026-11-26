@@ -11,9 +11,17 @@ module.exports = ({ yorha, dialog, logistics, headquarters }) => {
     let server
     const TOWER_PORT = 42153
     const hackedRegistry = new Map()
+    const sniperRegistry = new Set()
     const resurrectingSet = new Set()
     const proxy = httpProxy.createProxyServer({})
     const { routeMap = {}, proxyTarget } = getConfig()
+
+    proxy.on('error', (err, req, res) => {
+        if (!res.headersSent) {
+            res.writeHead(502, { 'Content-Type': 'application/json' })
+        }
+        res.end(JSON.stringify({ error: 'Proxy target unreachable', detail: err.message }))
+    })
 
     const erupt = async () => {
         proxy.on('proxyRes', function (proxyRes, req, res) {
@@ -53,8 +61,6 @@ module.exports = ({ yorha, dialog, logistics, headquarters }) => {
             })
         })
 
-        proxy.on('error', (err, req, res) => commander.report(err.message, 'red'))
-
         server = http.createServer(async (req, res) => {
             if (!proxyTarget) {
                 return
@@ -69,7 +75,13 @@ module.exports = ({ yorha, dialog, logistics, headquarters }) => {
                     try {
                         const { labs } = require('../awakening').get()
                         const council = await labs?.council
-                        await council?.resurrection?.(moduleName)
+                        const resInfo = await council?.resurrection?.(moduleName)
+                        const sniperData = resInfo?.sniperData
+                        if (sniperData && Object.keys(sniperData).length > 0 && !sniperRegistry.has(moduleName)) {
+                            sniperRegistry.add(moduleName)
+                            pod153.report(dialog.pod153.capturedRuntimeSignal(moduleName))
+                            await headquarters.reconciler({ fileName: moduleName, data: [sniperData] })
+                        }
                     } finally {
                         resurrectingSet.delete(moduleName)
                     }
@@ -94,7 +106,7 @@ module.exports = ({ yorha, dialog, logistics, headquarters }) => {
         })
     }
 
-    const destroy = async () => await server.close()
+    const destroy = async () => await server?.close()
 
     erupt()
 

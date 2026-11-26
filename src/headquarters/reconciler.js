@@ -15,6 +15,66 @@ module.exports = async ({ data, fileName }) => {
     const resourcePath = path.join(process.cwd(), pagesDir, fileName, 'resource.js')
     const enumParams = (await labs?.council)?.[fileName] ?? '{}'
 
+    const extractFields = str => {
+        const fieldMap = new Map()
+        const stack = []
+        let i = 0
+
+        const skipString = quote => {
+            i++
+            while (i < str.length) {
+                if (str[i] === '\\') { i += 2; continue }
+                if (str[i] === quote) break
+                i++
+            }
+        }
+
+        while (i < str.length) {
+            const ch = str[i]
+            if (ch === "'" || ch === '"' || ch === '`') {
+                skipString(ch)
+            } else if (ch === '/' && str[i + 1] === '/') {
+                while (i < str.length && str[i] !== '\n') i++
+            } else if (ch === '/' && str[i + 1] === '*') {
+                i += 2
+                while (i < str.length && !(str[i] === '*' && str[i + 1] === '/')) i++
+                i++
+            } else if (ch === '{' || ch === '[') {
+                stack.push({ type: ch, start: i, children: [] })
+            } else if ((ch === '}' || ch === ']') && stack.length > 0) {
+                const top = stack[stack.length - 1]
+                if ((top.type === '{' && ch === '}') || (top.type === '[' && ch === ']')) {
+                    stack.pop()
+                    if (stack.length > 0) {
+                        stack[stack.length - 1].children.push([top.start, i + 1])
+                    }
+                    if (top.type === '{') {
+                        let cleanObj = ''
+                        let cursor = top.start
+                        for (const [cStart, cEnd] of top.children) {
+                            cleanObj += str.slice(cursor, cStart)
+                            cursor = cEnd
+                        }
+                        cleanObj += str.slice(cursor, i + 1)
+
+                        const keyMatch = cleanObj.match(/(?:dataIndex|name)\s*:\s*(?:'([^']*)'|"([^"]*)")/)
+                        const key = keyMatch?.[1] ?? keyMatch?.[2]
+                        if (key && key !== 'index') {
+                            const labelMatch = cleanObj.match(/(?:title|label)\s*:\s*(?:'([^']*)'|"([^"]*)")/)
+                            const label = (labelMatch?.[1] ?? labelMatch?.[2] ?? '').trim()
+                            if (!fieldMap.has(key) || (!fieldMap.get(key) && label)) {
+                                fieldMap.set(key, label)
+                            }
+                        }
+                    }
+                }
+            }
+            i++
+        }
+
+        return Array.from(fieldMap.entries()).map(([key, label]) => (label ? `${key}(${label})` : key))
+    }
+
     const spinner = pod153.start(dialog.pod153.reconEncryptedData(fileName))
 
     try {
@@ -27,28 +87,36 @@ module.exports = async ({ data, fileName }) => {
 
         nineS.update(spinner, dialog.nineS.scanningField)
 
-        const extractKeys = str => {
-            const keys = []
-            const regex = /(dataIndex|name)\s*:\s*['"]([^'"]+)['"]/g
-            let match
-            while ((match = regex.exec(str)) !== null) {
-                keys.push(match[2])
-            }
-            return Array.from(new Set(keys.filter(key => key !== 'index')))
-        }
+        const fieldsWithLabel = extractFields(resourceStr)
+        const result = await reconciler({ responseStr: JSON.stringify(data), resourceStr: fieldsWithLabel.join(',') })
 
-        const result = await reconciler({ responseStr: JSON.stringify(data), resourceStr: extractKeys(resourceStr).join(',') })
-        let changeCount = 0
-        const resultMapping = {}
-        Object.entries(result).forEach(([oldField, newField]) => {
-            if (oldField === newField) return
-            const regex = new RegExp(`(dataIndex|name)\\s*:\\s*['"]${oldField}['"]`, 'g')
-            resourceStr = resourceStr.replace(regex, `$1: '${newField}'`)
-            changeCount++
-            resultMapping[oldField] = newField
+        const pendingMap = {}
+        Object.entries(result || {}).forEach(([rawOld, rawNew]) => {
+            const oldField = String(rawOld).split('(')[0].trim()
+            const newField = String(rawNew ?? '').split('(')[0].trim()
+            if (oldField && newField && oldField !== newField) {
+                pendingMap[oldField] = newField
+            }
         })
 
-        fs.writeFileSync(resourcePath, resourceStr)
+        const resultMapping = {}
+        const keys = Object.keys(pendingMap)
+        if (keys.length > 0) {
+            const escaped = keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')
+            const replaceRegex = new RegExp(`(dataIndex|name)\\s*:\\s*(['"])(${escaped})\\2`, 'g')
+            resourceStr = resourceStr.replace(replaceRegex, (full, prop, quote, oldField) => {
+                const newField = pendingMap[oldField]
+                if (!newField || oldField === newField) return full
+                resultMapping[oldField] = newField
+                return `${prop}: '${newField}'`
+            })
+        }
+
+        const changeCount = Object.keys(resultMapping).length
+        if (changeCount > 0) {
+            fs.writeFileSync(resourcePath, resourceStr)
+        }
+
         const endTime = Date.now()
 
         pod153.success(spinner, dialog.pod153.bridgeProtocolComplete(changeCount, (endTime - startTime) / 1000))

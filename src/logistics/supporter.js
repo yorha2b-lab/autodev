@@ -158,18 +158,28 @@ const launchPuppeteer = async (sessionDir, currentBrowser) => {
     }
 
     if (!isBrowserAlive) {
-
         ['SingletonLock', 'SingletonSocket', 'SingletonCookie'].forEach(file => {
             try { fs.unlinkSync(path.join(sessionDir, file)) } catch (e) { }
         })
 
-        currentBrowser = await puppeteer.launch({
+        const launchOptions = {
             headless: false,
             handleSIGINT: false,
             defaultViewport: null,
             userDataDir: sessionDir,
             args: ['--start-maximized']
-        })
+        }
+
+        try {
+            currentBrowser = await puppeteer.launch(launchOptions)
+        } catch (err) {
+            // 如果缓存里没下到内置 Chromium，自动回退使用本机已安装的 Chrome / Edge
+            try {
+                currentBrowser = await puppeteer.launch({ ...launchOptions, channel: 'chrome' })
+            } catch (chromeErr) {
+                currentBrowser = await puppeteer.launch({ ...launchOptions, channel: 'msedge' })
+            }
+        }
     }
     return currentBrowser
 }

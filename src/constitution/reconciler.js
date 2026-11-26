@@ -3,6 +3,7 @@ module.exports = ({ responseStr, resourceStr }) => `
 
 ## 1. 核心输入 (Signal Capture)
 - **前端现状 (Source Keys)**:
+- 前端字段中括号内为中文 label 提示，返回的 JSON key 请只保留括号前的原英文字段名:
 ${resourceStr}
 
 - **后端样本 (Target Data)**:
