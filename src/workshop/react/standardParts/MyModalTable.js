@@ -11,8 +11,6 @@ export const MyModalTable = ({ api, onOk, title, width, footer, visible, operate
 
     const { total, loading, columns, dataSource, search, refresh, setLoading, setSearch, setDataSource } = useTableQuery({ api, cols: modalColumns, initialParams, formatResponse, isLocalPaging })
 
-    const handleSearch = values => setSearch(prev => ({ ...prev, ...values, pageNo: 1 }))
-
     const handleTableChange = (pagination, filters, sorter) => setSearch(prev => ({ ...prev, pageNo: pagination.current, pageSize: pagination.pageSize, orderBy: sorter.column ? sorter.field : undefined }))
 
     const handleOk = async () => {
@@ -34,7 +32,7 @@ export const MyModalTable = ({ api, onOk, title, width, footer, visible, operate
 
     return (
         <Modal centered destroyOnClose title={title} width={width} open={visible} onOk={handleOk} footer={footer?.({ setModal })} onCancel={() => setModal({ visible: false })} confirmLoading={pending} bodyStyle={{ paddingBottom: 0 }}>
-            {formItems?.length > 0 && <MySearchForm form={form} search={search} formItems={formItems} setSearch={handleSearch} syncUrlParams={false} />}
+            {formItems?.length > 0 && <MySearchForm form={form} search={search} formItems={formItems} setSearch={setSearch} syncUrlParams={false} />}
             {functionButtons?.length > 0 && <Space style={{ marginBottom: 12 }}>{functionButtons.map(item => <Button key={item.name} type={item.type} loading={loading} disabled={item.disabled} onClick={() => item.onClick({ refresh, setLoading, setSearch, setDataSource })}>{item.name}</Button>)}</Space>}
             <MyTable
                 total={total}

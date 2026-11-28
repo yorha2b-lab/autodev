@@ -120,7 +120,7 @@ export const MyForm = ({ record, formItems = [], externalForm, labelCol, wrapper
             })
             form.setFieldsValue(initialData)
         }
-    }, [form, record, formItems])
+    }, [form, record])
 
     return (
         <FormContext.Provider value={{ tableProps, renderAction }}>
